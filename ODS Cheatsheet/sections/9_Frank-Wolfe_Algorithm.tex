@@ -1,0 +1,260 @@
+\section*{9. The Frank-Wolfe Algorithm}
+\subsection*{Linear minimization oracle}
+Given $\mathbf{g} \in \mathbb{R}^{d}$,
+$$
+\operatorname{LMO}_{X}(\mathbf{g}):=\underset{\mathbf{z} \in X}{\operatorname{argmin}} \ \mathbf{g}^{\top} \mathbf{z}
+$$
+is any minimizer of the linear function $\mathbf{g}^{\top} \mathbf{z}$ over $X$.
+
+We assume that a minimizer exists whenever we apply the oracle. If $X$ is closed and bounded, this is guaranteed.
+
+
+
+
+\subsection*{Frank-Wolfe Algorithm}
+Given an initial feasible point $\mathbf{x}_{0} \in X$, and (time-dependent) stepsizes $\gamma_{t} \in[0,1]$, repeat the following for $t=0,1, \ldots$ :
+$$
+\begin{aligned}
+\mathbf{s} &:=\operatorname{LMO}_{X}\left(\nabla f\left(\mathbf{x}_{t}\right)\right) \\
+\mathbf{x}_{t+1} &:=\left(1-\gamma_{t}\right) \mathbf{x}_{t}+\gamma_{t} \mathbf{s}
+\end{aligned}
+$$
+
+Let $\y := \x_{t+1} = \x + \gamma(\vect{s} -\x)$, then
+$$
+\frac{1}{\gamma^2} \|\y - \x\|^2 = \|\vect{s}- \x\|^2
+$$
+
+
+
+
+\subsection*{Atoms}
+The Frank-Wolfe algorithm is particularly useful when $X$ is the convex hull of a finite or otherwise nice set of points $\mathcal{A}$ (the \green{atoms}, or \green{extreme points}), $X=\operatorname{conv}(\mathcal{A})$.
+\begin{itemize}[leftmargin=*]
+    \item $\mathrm{LMO}_{X}(\mathbf{g})=\operatorname{argmin}_{\mathbf{z} \in X} \mathbf{g}^{\top} \mathbf{z}$ is always attained by some atom.
+    \item This may significantly simplify the search for $\mathbf{s}=\operatorname{LMO}_{X}(\mathbf{g})$.
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Example: Spectahedron}
+\green{Hazan's algorithm}: an application of the Frank-Wolfe algorithm to semidefinite programming.
+$\operatorname{LMO}_{X}(\G)$:
+$$
+\begin{array}{ll}
+\operatorname{argmin} & \G \bullet \Z \\
+\text {subject to } & \operatorname{Tr}(\Z)=1 \\
+& \Z \succeq 0
+\end{array}
+$$
+\begin{itemize}[leftmargin=*]
+    \item $X$ is the spectahedron, the set of all (symmetric) positive semidefinite matrices $\Z \in \mathbb{R}^{d \times d}$ of trace 1.
+    \green{Spectahedron}: $X=\left\{\Z \in \mathbb{R}^{d \times d}: \operatorname{Tr}(\Z)=1, \Z \succeq 0\right\}$
+    \item $\G$ is a symmetric matrix.
+    \item $\A \bullet \B$ stands for the scalar product of two square matrices $\A$ and $\B$, $\A \bullet \B=\sum_{i, j} a_{i j} b_{i j}$.
+    \item The LMO is a semidefinite program itself, but of a simple form that allows an explicit solution.
+    \item \green{Atoms}: The matrices of the form $\mathbf{z z}^{\top}$ with $\mathbf{z} \in \mathbb{R}^{d},\|\mathbf{z}\|=1$ (these are positive semidefinite of trace 1 and hence in $X$).
+\end{itemize}
+Need to show: every $\Z \in X$ is a convex combination of atoms.
+\begin{itemize}[leftmargin=*]
+    \item diagonalize: $\Z=\T \D \T^{\top}$ where $\T$ is orthogonal and $\D$ is diagonal, of trace 1 .
+    \item $\D$'s diagonal elements $\lambda_{1}, \ldots, \lambda_{d}$ are the (nonnegative) eigenvalues of $\Z$.
+    \item Let $\mathbf{a}_{i}$ be the $i$-th column of $\T$. As $\T$ is orthogonal, we have $\left\|\mathbf{a}_{i}\right\|=1$.
+    \item $\Z=\sum_{i=1}^{d} \lambda_{i} \mathbf{a}_{i} \mathbf{a}_{i}^{\top}$ is the desired convex combination of atoms.
+\end{itemize}
+
+
+
+
+
+
+
+\subsection*{Lemma 9.1}
+Let $\lambda_{1}$ be the smallest eigenvalue of $\G$, and let $\mathbf{s}_{1}$ be a corresponding eigenvector of unit length. Then we can choose $\operatorname{LMO}_{X}(\G)=\mathbf{s}_{1} \mathbf{s}_{1}^{\top}$.
+
+
+
+
+
+
+
+\subsection*{Lemma 9.2}
+Duality gap:
+$
+g(\mathbf{x}):=\nabla f(\mathbf{x})^{\top}(\mathbf{x}-\mathbf{s})$ for $ \mathbf{s}:=\operatorname{LMO}_{X}(\nabla f(\mathbf{x}))
+$.
+
+Suppose that the constrained minimization problem $\min \{f(\mathbf{x}): \mathbf{x} \in X\}$ has a minimizer $\mathbf{x}^{\star}$. Let $\mathbf{x} \in X$. Then
+$$
+g(\mathbf{x}) \geq f(\mathbf{x})-f\left(\mathbf{x}^{\star}\right)
+$$
+meaning that the duality gap is an upper bound for the optimality gap.
+
+
+
+
+
+
+\subsection*{Thm 9.3 Convergence in $\mathcal{O}(1 / \varepsilon)$ steps}
+Consider the constrained minimization problem $\min \{f(\mathbf{x}): \mathbf{x} \in X\}$ where $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ is convex and smooth with parameter $L$, and set $X$ is convex, closed and bounded (in particular, a minimizer $\mathrm{x}^{\star}$ of $f$ over $X$ exists, and all linear minimization oracles have minimizers). With any $\mathbf{x}_{0} \in X$, and with stepsizes $\gamma_{t}=2 /(t+2)$, the Frank-Wolfe algorithm yields
+$$
+f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq \frac{2 L \operatorname{diam}(X)^{2}}{T+1}, \quad T \geq 1
+$$
+where $\operatorname{diam}(X):=\max _{\mathbf{x}, \mathbf{y} \in X}\|\mathbf{x}-\mathbf{y}\|$ is the diameter of $X$ (which exists since $X$ is closed and bounded).
+
+\begin{itemize}[leftmargin=*]
+    \item \green{Standard stepzise} in the Frank-Wolfe algorithm: $\gamma_{t}=2 /(t+2)$.
+    \item We need to assume that \red{$f$ is smooth}, but the smoothness parameter $L$ does not enter the stepsize.
+\end{itemize}
+
+
+
+
+
+\subsection*{Lemma 9.4 Descent Lemma}
+For a step $\mathbf{x}_{t+1}:=\mathbf{x}_{t}+\gamma_{t}\left(\mathbf{s}-\mathbf{x}_{t}\right)$ with stepsize $\gamma_{t} \in[0,1]$, it holds that
+$$
+f\left(\mathbf{x}_{t+1}\right) \leq f\left(\mathbf{x}_{t}\right)-\gamma_{t} g\left(\mathbf{x}_{t}\right)+\gamma_{t}^{2} \frac{L}{2}\left\|\mathbf{s}-\mathbf{x}_{t}\right\|^{2}
+$$
+where $\mathbf{s}=\mathrm{LMO}_{X}\left(\nabla f\left(\mathbf{x}_{t}\right)\right)$.
+
+
+
+
+\subsection*{Stepsize variants}
+Writing $h(\mathbf{x}):=f(\mathbf{x})-f\left(\mathbf{x}^{\star}\right)$ for the (unknown) optimization gap at point $\mathbf{x}$, and we have $h(\mathbf{x}) \leq g(\mathbf{x})$.
+
+Let $C:=\frac{L}{2} \operatorname{diam}(X)^{2}$. Thm 9.3 can be written as 
+$$f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)=h\left(\mathbf{x}_{t}\right) \leq \frac{4 C}{t+1}, \quad t \geq 1$$
+
+\subsubsection*{Line search stepsize}
+$$\gamma_{t}:=\underset{\gamma \in[0,1]}{\operatorname{argmin}} f\left((1-\gamma) \mathbf{x}_{t}+\gamma \mathbf{s}\right)$$.
+
+Let $\mathbf{y}_{t+1}$ be the iterate obtained from $\mathbf{x}_{t}$ with the standard stepsize $\mu_{t}=2(t+2)$. We return to the previous analysis:
+$$
+h\left(\mathbf{x}_{t+1}\right) \leq h\left(\mathbf{y}_{t+1}\right) \leq\left(1-\mu_{t}\right) h\left(\mathbf{x}_{t}\right)+\mu_{t}^{2} C
+$$
+
+
+\subsubsection*{Gap-based stepsize}
+Choose $\gamma_{t}$ such that the term $-\gamma_{t} g\left(\mathbf{x}_{t}\right)+\gamma_{t}^{2} \frac{L}{2}\left\|\mathbf{s}-\mathbf{x}_{t}\right\|^{2}$ on the right-hand side of the inequality for $h\left(\mathbf{x}_{t+1}\right)$ a is minimized.
+$$
+\gamma_{t}:=\min \left(\frac{g\left(\mathbf{x}_{t}\right)}{L\left\|\mathbf{s}-\mathbf{x}_{t}\right\|^{2}}, 1\right)
+$$
+
+
+
+
+
+
+
+\subsection*{Affinely Equivalent}
+$(f, X)$ and $\left(f^{\prime}, X^{\prime}\right)$ are called \green{affinely equivalent} if $f^{\prime}(\mathbf{x})=f(A \mathbf{x}+\mathbf{b})$ for some invertible matrix $A$ and some vector $\mathbf{b}$, and $X^{\prime}=\left\{A^{-1}(\mathbf{x}-\mathbf{b}): \mathbf{x} \in X\right\}$.
+
+We have $\mathbf{x} \in X$ with function value $f(\mathbf{x})$ if and only if $\mathbf{x}^{\prime}=A^{-1}(\mathbf{x}-\mathbf{b}) \in X^{\prime}$ with the same function value $f^{\prime}\left(\mathbf{x}^{\prime}\right)=f\left(A A^{-1}(\mathbf{x}-\mathbf{b})+\mathbf{b}\right)=f(\mathbf{x})$.
+
+
+
+
+
+
+
+\subsection*{Affine invariance of the Frank-Wolfe algorithm}
+The Frank-Wolfe algorithm is \green{invariant} under all affine transformations of space.
+
+Let $(f, X)$ and $\left(f^{\prime}, X^{\prime}\right)$ be affinely equivalent as before.
+
+The points $\mathbf{x}$ and $\mathbf{x}^{\prime}=\A^{-1}(\mathbf{x}-\mathbf{b}) \in X^{\prime}$ are said to correspond to each other.
+
+\green{Chain rule}: $\nabla f^{\prime}\left(\mathbf{x}^{\prime}\right)=\A^{\top} \nabla f\left(\A \mathbf{x}^{\prime}+\mathbf{b}\right)=\A^{\top} \nabla f(\mathbf{x})$.
+
+Now consider performing an iteration of the Frank-Wolfe algorithm
+
+(a) on $(f, X)$, starting from some iterate $\mathbf{x}$, and
+
+(b) on $\left(f^{\prime}, X^{\prime}\right)$, starting from the corresponding iterate $\mathbf{x}^{\prime}$,
+
+in both cases with the same stepsize.
+
+Corresponding linear function values:
+$$
+\nabla f^{\prime}\left(\mathbf{x}^{\prime}\right)^{\top} \mathbf{z}^{\prime}=\nabla f(\mathbf{x})^{\top} \A \A^{-1}(\mathbf{z}-\mathbf{b})=\nabla f(\mathbf{x})^{\top} \mathbf{z}-c
+$$
+where $c$ some constant.
+
+Corresponding steps: $\mathbf{s}=\operatorname{LMO}_{X}(\nabla f(\mathbf{x}))$ if and only if $\mathbf{s}^{\prime}=\mathrm{LMO}_{X^{\prime}}\left(\nabla f^{\prime}\left(\mathbf{x}^{\prime}\right)\right)$
+
+
+
+
+
+
+\subsection*{Curvature Constant}
+Curvature constant (notion of complexity of $(f, X)$ ):
+$$
+C_{(f, X)}:=\sup _{\substack{\mathbf{x}, \mathbf{s} \in X, \gamma \in(0,1] \\ \mathbf{y}=(1-\gamma) \mathbf{x}+\gamma \mathbf{s}}} \frac{1}{\gamma^{2}}\left(f(\mathbf{y})-f(\mathbf{x})-\nabla f(\mathbf{x})^{\top}(\mathbf{y}-\mathbf{x})\right) .
+$$
+
+The curvature constant is \green{affine invariant}, i.e. if $(f, X)$ and $\left(f^{\prime}, X^{\prime}\right)$ are affinely equivalent, then $C_{(f, X)}=C_{\left(f^{\prime}, X^{\prime}\right)}$.
+
+
+
+
+
+
+
+\subsection*{Thm 9.5 Convergence in terms of the curvature constant}
+Consider the constrained minimization problem where $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ is convex, and set $X$ is convex, closed and bounded. Let $C_{(f, X)}$ be the curvature constant of $f$ over $X$. With $\mathbf{x}_{0} \in X$, and with stepsizes $\gamma_{t}=2 /(t+2)$, the Frank-Wolfe algorithm yields
+$$
+f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq \frac{4 C_{(f, X)}}{T+1}, \quad T \geq 1
+$$
+
+$\O(1 / \varepsilon)$ many iterations are sufficent to obtain optimality gap at most $\varepsilon$.
+
+
+
+
+\subsection*{Lemma 9.6 Relating Curvature and Smoothness}
+Let $f$ be a convex function which is smooth with parameter $L$ over $X$. Then
+$$
+C_{(f, X)} \leq \frac{L}{2} \operatorname{diam}(X)^{2}
+$$
+
+
+
+
+\subsection*{Convergence in duality gap}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be convex and smooth with parameter $L$, and $\mathbf{x}_{0} \in X, T \geq 2$. Then choosing any of the three stepsizes that we have discussed, the Frank-Wolfe algorithm guarantees some $t, 1 \leq t \leq T$ such that
+$$
+g\left(\mathbf{x}_{t}\right) \leq \frac{27 / 2 \cdot C_{(f, X)}}{T+1}, \quad T \geq 2
+$$
+
+The smallest value $g\left(\mathbf{x}_{t}\right), t=1, \ldots, T$ bounds the optimality gap at iteration $t$ :
+$$
+f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right) \leq g\left(\mathbf{x}_{t}\right) \leq \frac{27 / 2 \cdot C_{(f, X)}}{T+1}
+$$
+
+This is a computable bound that certifies small optimality gap.
+
+
+
+\subsection*{Coreset}
+The current solution is a convex combination of $\mathbf{x}_{0}$ and $\O(1 / \varepsilon)$ many extreme points (atoms) of the constraint set $X$.
+
+Thinking of $\varepsilon$ as a constant (such as $0.01$ ): \melon{constantly} many extreme points are sufficient in order to get an \melon{almost} optimal solution.
+
+
+\green{Coreset}: a small subsets of a given set of objects that is representative (with respect to some measure) for the set of all objects.
+
+Some algorithms for finding small coresets are variants of or inspired by the
+Frank-Wolfe algorithm
+
+
+
+
+
+
+

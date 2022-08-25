@@ -1,0 +1,321 @@
+\section*{5. Subgradient Methods}
+\subsection*{Loss Func}
+\begin{enumerate}[label = (\arabic*), leftmargin=*]
+    \item 0-1 Loss: $f(s)= \begin{cases}1, & s<0 \\ 0, & s \geq 0\end{cases}$
+    \item Hinge losss: $f(s)=\max (0,1-s)$
+    \item Squared loss: $f(s)=(s-1)^{2}$
+    \item Exponential loss: $f(s)=e^{-s}$
+    \item Logistic loss: $f(s)=\log \left(1+e^{-s}\right)$
+\end{enumerate}
+(1) non-convex, (2)-(5) convex.
+(1)(2)(4) non-smooth, (3)(5) smooth.
+
+
+
+\subsection*{Subgradients}
+$\mathbf{g} \in \mathbb{R}^{d}$ is a \green{subgradient} (\red{not always unique}) of $f$ at $\mathbf{x}$ if
+$$
+f(\mathbf{y}) \geq f(\mathbf{x})+\mathbf{g}^{\top}(\mathbf{y}-\mathbf{x}) \quad \text { for all } \mathbf{y} \in \operatorname{dom}(f)
+$$
+$\partial f(\mathbf{x}) \subseteq \mathbb{R}^{d}$ is the \green{subdifferential}, the set of subgradients of $f$ at $\mathbf{x}$.
+
+
+
+
+\subsection*{Lemma 5.2 Subgradients of Differentiable Func}
+If $f$ is differentiable at $\mathbf{x} \in \mathbf{d o m}(f)$, then $\partial f(\mathbf{x}) \subseteq\{\nabla f(\mathbf{x})\}$.
+
+i.e., either exactly one subgradient $\nabla f(\mathbf{x})$, or no subgradient at all.
+
+
+
+
+\subsection*{Lemma 5.3 Subgradient Characterization of Convexity}
+\begin{enumerate}[label = (\roman*), leftmargin=*]
+    \item If $f$ is convex, then $\partial f(\mathbf{x}) \neq \emptyset$ for all $\mathbf{x}$ in the (relative) interior of $\operatorname{dom}(f)$.
+    \item If $\operatorname{dom}(f)$ is convex and $\partial f(\mathbf{x}) \neq \emptyset$ for all $\mathbf{x} \in \operatorname{dom}(f)$, then $f$ is convex.
+\end{enumerate}
+i.e., \red{convex = subgradients everywhere}.
+
+
+
+
+
+\subsection*{Thm 5.4 Hyperplane Separation Theorem}
+Two nonempty convex sets can be separated by a hyperplane if their (relative) interiors do not intersect.
+
+
+
+\subsection*{Thm 5.5 Differentiability of convex functions}
+A \red{convex} function $f$ is differentiable \red{almost everywhere} on $\operatorname{dom}(f)$.
+
+
+
+
+\subsection*{Lemma 5.6 Convex and Lipschitz continuity $\iff$ Bounded Subgradients}
+Let $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ be \red{convex}, $\operatorname{dom}(f)$ open, $B \in \mathbb{R}_{+}$. Then the following two statements are equivalent:
+\begin{enumerate}[label = (\roman*), leftmargin=*]
+    \item $\|\mathbf{g}\|_{2} \leq B$ for all $\mathbf{x} \in \operatorname{dom}(f)$ and all $\mathbf{g} \in \partial f(\mathbf{x})$.
+    \item $|f(\mathbf{x})-f(\mathbf{y})| \leq B\|\mathbf{x}-\mathbf{y}\|_{2}$ for all $\mathbf{x}, \mathbf{y} \in \operatorname{dom}(f)$.
+\end{enumerate}
+
+More generally, let $f: S \rightarrow \mathbb{R}$ be a convex function. Then, $f$ is $L-$ Lipschitz over $S$ with respect to a norm $\|\cdot\|$ \red{iff} for all $\mathbf{w} \in S$ and $\mathbf{z} \in \partial f(\mathbf{w})$ we have that $\|\mathbf{z}\|_{\star} \leq L$, where $\|\cdot\|_{\star}$ is the dual norm.
+
+
+
+
+\subsection*{Lemma 5.7 Subgradient optimality condition}
+Suppose that $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ and $\mathbf{x} \in \operatorname{dom}(f)$. If $0 \in \partial f(\mathbf{x})$, then $\mathbf{x}$ is a \red{global min}.
+
+
+
+
+
+
+
+
+\subsection*{Calculus of Subgradient and Subdifferential}
+\begin{itemize}[leftmargin=*]
+    \item \green{Conic combination}: Let $h(\mathbf{x})=\beta_{1} f_{1}(\mathbf{x})+\beta_{2} f_{2}(\mathbf{x})$ with $\beta_{1}, \beta_{2} \geq 0$, then 
+$
+\partial h(\mathbf{x})=\beta_{1} \partial f_{1}(\mathbf{x})+\beta_{2} \partial f_{2}(\mathbf{x})
+$
+    \item \green{Affine transformation}: Let $h(\mathbf{x})=f(A \mathbf{x}+b)$, then 
+$
+\partial h(\mathbf{x})=A^{\top} \partial f(A \mathbf{x}+b)
+$
+    \item \green{Pointwise maximum}: Let $h(\mathbf{x})=\max _{i=1, \ldots, m} f_{i}(\mathbf{x})$, then
+$
+\partial h(x)=\operatorname{conv}\left\{\partial f_{i}(\mathbf{x}): i \text { such that } f_{i}(\mathbf{x})=h(\mathbf{x})\right\}
+$ (convex hull)
+\end{itemize}
+
+
+\subsubsection*{Remark}
+Negative subgradient may \red{not} be a descent direction.
+
+
+
+
+
+\subsection*{Convex Nonsmooth Problem Setting}
+$\begin{array}{cl}\text { minimize } & f(\mathbf{x}) \\ \text { subject to } & \mathbf{x} \in X\end{array}$
+
+Assume that
+\begin{itemize}[leftmargin=*]
+    \item $f(\mathbf{x})$ is \red{convex and $B$-Lipschitz continuous} on $X$:
+$$
+|f(\mathbf{x})-f(\mathbf{y})| \leq B\|\mathbf{x}-\mathbf{y}\|_{2}, \quad \forall \mathbf{x}, \mathbf{y} \in X .
+$$
+This implies that $\|\mathbf{g}\|_{2} \leq B$ for any $\mathbf{g} \in \partial f(x)$.
+    \item $X$ is \red{convex and compact}: $R:=\displaystyle \max _{\mathbf{x}, \mathbf{y} \in X}\|\mathbf{x}-\mathbf{y}\|_{2}<+\infty$.
+\end{itemize}
+
+Denote $X^{*}$ as the optimal set such that $X^{*} \neq \emptyset$.
+
+Denote $f^{*}$ as the optimal value such that $f^{*}<\infty$.
+
+
+
+
+
+
+
+\subsection*{Subgradient Descent}
+Choose $\mathbf{x}_{1} \in \mathbb{R}^{d}$.
+$$
+\begin{aligned}
+    \mathbf{x}_{t+1}&:=\Pi_{X}\left(\mathbf{x}_{t}-\gamma_{t} \mathbf{g}_{t}\right) \\
+&=\underset{\mathbf{x} \in X}{\operatorname{argmin}}\left\{\frac{1}{2}\left\|\mathbf{x}-\mathbf{x}_{t}\right\|_{2}^{2}+\left\langle\gamma_{t} \mathbf{g}_{t}, \mathbf{x}\right\rangle\right\},  \mathbf{g}_{t} \in \partial f\left(\mathbf{x}_{t}\right)
+\end{aligned}
+$$
+\begin{itemize}[leftmargin=*]
+    \item $\mathbf{g}_{t}$ is a \green{subgradient} of $f$ at $\mathbf{x}_{t}$.
+    \item $\gamma_{t}>0$ is a proper (time-varying) \green{stepsize}.
+    \item $\Pi_{X}(\mathbf{y}):=\operatorname{argmin}_{\mathbf{x} \in X}\|\mathbf{x}-\mathbf{y}\|_{2}^{2}$ is the \green{projection}.
+    \item When $f$ is differentiable and $X=\mathbb{R}^{d}$, this reduces to \green{Gradient Descent}.
+    \item When $f$ is differentiable and $X \subset \mathbb{R}^{d}$, this reduces to \green{Projected Gradient Descent}.
+    \item When $f$ is non-differentiable, we see that it is not always a descent method.
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Choices of Stepsize}
+\begin{itemize}[leftmargin=*]
+    \item Constant stepsize: $\gamma_{t}=\gamma$
+    \item Scaled stepsize: $\gamma_{t}=\frac{\gamma}{\left\|g_{t}\right\|_{2}}$
+    \item Non-summable but diminishing stepsize: $\gamma_{t} \rightarrow 0$ and $\sum_{t=1}^{\infty} \gamma_{t}=+\infty$, e.g.: $\gamma = \mathcal{O}\left(\frac{1}{\sqrt{t}}\right)$
+    \item Square summable stepsize: $\sum_{t=1}^{\infty} \gamma_{t}^{2}<+\infty$ and $\sum_{t=1}^{\infty} \gamma_{t}=+\infty$, e.g.: $\gamma = \mathcal{O}\left(\frac{1}{t}\right)$
+    \item \green{Polyak's stepsize}: $\gamma_{t}=\frac{f\left(\mathbf{x}_{t}\right)-f^{*}}{\left\|\mathbf{g}_{t}\right\|_{2}^{2}}$, where $f^{*}$ is the optimal value.
+\end{itemize}
+
+
+
+
+
+\subsection*{Lemma 5.8 Basic Descent Lemma}
+If $f$ is convex (and $B$-Lipschitz), then for any optimal solution $\mathbf{x}^{*} \in X^{*}$,
+$$
+\begin{aligned}
+    &\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|_{2}^{2} \leq\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}-2 \gamma_{t}\left(f\left(\mathbf{x}_{t}\right)-f^{*}\right)+\gamma_{t}^{2}\left\|\mathbf{g}_{t}\right\|_{2}^{2} \\
+    \Rightarrow &\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|_{2}^{2} \leq\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}+\gamma_{t}^{2}\left\|\mathbf{g}_{t}\right\|_{2}^{2} \\
+    \Rightarrow &\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|_{2}^{2} \leq\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}+\gamma_{t}^{2}B^2 \\
+    \Rightarrow &\left\|\mathbf{x}_{T}-\mathbf{x}^{*}\right\|_{2}^{2} \leq\left\|\mathbf{x}_{t_k}-\mathbf{x}^{*}\right\|_{2}^{2}+B^2 \sum_{t=t_k}^{T-1}\gamma_t^2
+\end{aligned}
+$$
+
+
+
+
+\subsection*{Thm 5.9 Main Theorem on Convergence}
+If $f$ is convex, then the subgradient method satisfies:
+$$
+\min _{1 \leq t \leq T} f\left(\mathbf{x}_{t}\right)-f^{*} \leq \frac{\left\|\mathbf{x}_{1}-\mathbf{x}^{*}\right\|_{2}^{2}+\sum_{t=1}^{T} \gamma_{t}^{2}\left\|\mathbf{g}_{t}\right\|_{2}^{2}}{2 \sum_{t=1}^{T} \gamma_{t}}
+$$
+
+
+
+
+
+
+\subsection*{Asymptotic Convergence under Different Stepsizes}
+Recall $\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\| \leq R^2$ and $\left\|\mathbf{g}_{t}\right\|_{2}^{2} \leq B^2$
+\begin{itemize}[leftmargin=*]
+    \item Constant $\gamma_{t} \equiv \gamma$: 
+$
+    \displaystyle \liminf _{t \rightarrow \infty} f\left(\mathbf{x}_{t}\right) \leq f^{*}+B^{2} \gamma / 2 
+$
+    \item Scaled $\gamma_{t}=\frac{\gamma}{\left\|{g}_{t}\right\|_{2}}$:
+$
+ \displaystyle\liminf _{t \rightarrow \infty} f\left(\mathbf{x}_{t}\right) \leq f^{*}+B \gamma / 2 
+$
+    \item Square-summable  $\sum_{t=1}^{\infty} \gamma_{t}^{2}<+\infty$ and $\sum_{t=1}^{\infty} \gamma_{t}=+\infty$:
+$
+\liminf _{t \rightarrow \infty} f\left(\mathbf{x}_{t}\right)=f^{*} 
+$
+    \item Diminishing $\gamma_{t} \rightarrow 0$ and $\sum_{t=1}^{\infty} \gamma_{t}=+\infty$:
+$
+\liminf _{t \rightarrow \infty} f\left(\mathbf{x}_{t}\right)=f^{*}
+$
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Subgradient Descent Convergence under Polyak's Stepsizes}
+Minimizing the surrogate func in \green{Lemma 5.8} yields the optimal stepsize (\red{Polyak}):
+$
+\gamma_{t}=\frac{f\left(\mathbf{x}_{t}\right)-f^{*}}{\left\|\mathbf{g}_{t}\right\|_{2}^{2}}
+$
+
+
+
+This guarantees strict error reduction \red{(*)}:
+$$
+\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|_{2}^{2} \leq\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}-\frac{\left(f\left(\mathbf{x}_{t}\right)-f^{*}\right)^{2}}{\left\|g\left(\mathbf{x}_{t}\right)\right\|_{2}^{2}}
+$$ 
+
+It follows that $f\left(\mathbf{x}_{t}\right) \rightarrow f^{*}$ and $\left\{\mathbf{x}_{t}\right\} \rightarrow \mathbf{x}^{*}$.
+
+Polyak's Stepsize is useful when the optimal value $f^{*}$ is known, but minimizer $\vect{x}^*$ is unknown.
+
+In practice, the opt value is often not available. One can replace $f^{*}$ by an online estimate, e.g., $\displaystyle\hat{f}_{t}:=\min _{0 \leq \tau \leq t} f\left(\mathbf{x}_{\tau}\right)-\delta$
+
+\begin{itemize}[leftmargin=*]
+    \item Assume $f$ is convex and $B$-Lipscitz, then \red{(*)} implies
+    $$\min _{1 \leq t \leq T} f\left(\x_{t}\right)-f\left(\x^{*}\right) \leq \frac{B\left\|\x_{1}-\x^{*}\right\|_{2}}{\sqrt{T}}$$
+    
+    (\red{Proof see Hw5 Ex4.1})
+    
+    \item Asuume $f$ is $\mu$ strongly convex and $B$-Lipscitz. 
+    \begin{itemize}[leftmargin=*]
+    \item In the case where $\mathrm{f}$ is non-differentiable, the definition of strong convexity we saw in lecture no longer applies. However, we can still define strong convexity in this setting as follows: For $\mu>0$, A function $f$ is said to be $\mu$-strongly convex if the function $f_{\mu}(x):=f(\x)-\frac{\mu}{2}\|\x\|^{2}$ is convex. Let f be $\mu$-strongly convex, then for all $\x, \y$ in the domain and for all $\mathbf{g} \in \partial {f}(\mathbf{x})$ we have ${f}(\mathbf{y}) \geq {f}(\mathbf{x})+\mathbf{g}^{\top}(\mathbf{y}-\mathbf{x})+\frac{\mu}{2}\|\mathbf{x}-\mathbf{y}\|^{2}$.
+    \end{itemize}
+    Then \red{(*)} implies
+$$\min _{1 \leq t \leq T} f\left(\x_{t}\right)-f\left(\x^{*}\right) \leq \frac{4 B^{2}}{\mu T}$$
+
+(\red{Proof see Hw5 Ex4.2})
+\end{itemize}
+
+
+
+
+\subsection*{Corollary 5.10 Convergence Rate for Convex Lipschitz Problem}
+If $f$ is convex and $B$-Lipschitz continuous, and $X$ is convex compact with diameter $R$. Let $\gamma_{t} \equiv \frac{R}{B \sqrt{T}}$ or $\gamma_{t} = \frac{R}{B \sqrt{t}}$, then
+$$
+\min _{1 \leq t \leq T} f\left(\mathbf{x}_{t}\right)-f^{*} \leq \O\left(\frac{B R}{\sqrt{T}}\right)
+$$
+\begin{itemize}[leftmargin=*]
+    \item Subgradient method \red{converges sublinearly}.
+    \item For an accuracy $\epsilon>0$, need $\mathcal{O}\left(\frac{B^{2} R^{2}}{\epsilon^{2}}\right)$ number of iterations or subgradients.
+\end{itemize}
+
+
+
+
+
+\subsection*{Strongly Convex and Lipschitz Problem}
+We now consider an even nicer problem class:
+$f(\mathbf{x})$ is \red{$\mu$-strongly convex} on $X$ with $\mu>0$:
+$$
+f(\mathbf{x}) \geq f(\mathbf{y})+\nabla f(\mathbf{y})^{\top}(\mathbf{x}-\mathbf{y})+\frac{\mu}{2}\|\mathbf{x}-\mathbf{y}\|_{2}^{2} . \quad \forall \mathbf{x}, \mathbf{y} \in X
+$$
+\subsubsection*{Lemma 5.11 Descent Lemma}
+$$
+\begin{aligned}
+    &\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|_{2}^{2} \leq \\
+    & \quad \left(1-\mu \gamma_{t}\right)\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}-2 \gamma_{t}\left(f\left(\mathbf{x}_{t}\right)-f^{*}\right)+\gamma_{t}^{2}\left\|\mathbf{g}_{t}\right\|_{2}^{2}
+\end{aligned}
+$$
+\subsubsection*{Thm 5.12}
+Let $f$ be \red{$\mu$-strongly convex and B-Lipschitz continuous} on $X$, then with $\gamma_{t}=\frac{2}{\mu(t+1)}$, we have
+$$
+\min _{1 \leq t \leq T} f\left(\mathbf{x}_{t}\right)-f^{*} \leq \frac{2 B^{2}}{\mu \cdot(T+1)}
+$$
+
+
+
+
+
+\subsection*{Summary of Subgradient Method}
+$$
+\begin{array}{c|c|c}
+\hline \hline & \text {Cvx} & \text {Strongly Cvx} \\
+\hline \text {Convergence rate} & O\left(\frac{B \cdot R}{\sqrt{t}}\right) & O\left(\frac{B^{2}}{\mu t}\right) \\
+\hline \text {Subgrad complexity} & O\left(\frac{B \cdot R}{\epsilon^{2}}\right) & O\left(\frac{B^{2}}{\mu \epsilon}\right) \\
+\hline \hline
+\end{array}
+$$
+$$
+B:=\sup _{\mathbf{x} \in X} \frac{|f(\mathbf{x})-f(\mathbf{y})|}{\|\mathbf{x}-\mathbf{y}\|_{2}}, R:=\max _{\mathbf{x}, \mathbf{y} \in X}\|\mathbf{x}-\mathbf{y}\|_{2}
+$$
+
+
+
+
+\subsection*{Subgradient Descent vs. Gradient Descent}
+$$
+\begin{array}{c|c|c|c}
+\hline \hline \text {Setting} & \text {Algo} & \text {Cvx} & \text {Strongly Cvx} \\
+\hline \text {Nonsmooth} & \text {Subgrad} & O\left(\frac{B \cdot R}{\sqrt{t}}\right) & O\left(\frac{B^{2}}{\mu t}\right) \\
+\hline \hline \text {Smooth} & \text {GD} & O\left(\frac{L \cdot R^{2}}{t}\right) & O\left(\left(1-\frac{\mu}{L}\right)^{t}\right) \\
+& \text {AGD} & O\left(\frac{L \cdot R^{2}}{t^{2}}\right) & O\left(\left(1-\sqrt{\frac{\mu}{L}}\right)^{t}\right) \\
+\hline
+\end{array}
+$$
+
+
+
+
+\subsection*{Lower Complexity Bound for Nonsmooth Cvx Opt}
+In the worst case, the sublinear rates $O(1 / \sqrt{t})$ and $O(1 / t)$ for convex and strongly convex Lipschitz problems \red{cannot be improved}, for algorithms using only subgradient oracles. Subgradient descent is "\red{optimal}"  for such problem classes.
+\subsubsection*{Thm 5.13 (Nemirovski \& Yudin, 1983)}
+For any $1 \leq t \leq d, \mathbf{x}_{1} \in \mathbb{R}^{d}$, there exists a $B$-Lipschitz continuous and convex function $f$, a convex set $X$ with diameter $R$, such that for any first-order method that generates:
+$$\mathbf{x}_{t} \in \mathbf{x}_{1}+\operatorname{span}\left(\mathbf{g}_{1}, \ldots, \mathbf{g}_{t-1}\right), \mathbf{g}_{i} \in \partial f\left(\mathbf{x}_{i}\right), i=1, \ldots, t-1$$
+
+We have $\min _{1 \leq s \leq t} f\left(\mathbf{x}_{s}\right)-f^{*} \geq \frac{B \cdot R}{4(1+\sqrt{t})}$

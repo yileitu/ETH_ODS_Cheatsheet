@@ -1,0 +1,441 @@
+\section*{10. Newton's Method and Quasi-Newton Methods}
+\subsection*{Newton-Raphson Method: 1-dim Case}
+\melon{Goal}: find a zero of differentiable $f: \mathbb{R} \rightarrow \mathbb{R}$.
+
+\melon{Method}:
+$$
+x_{t+1}:=x_{t}-\frac{f\left(x_{t}\right)}{f^{\prime}\left(x_{t}\right)}, \quad t \geq 0 .
+$$
+
+
+
+
+\subsection*{The Babylonian Method (Computing square roots)}
+Computing square roots: find a zero of $f(x)=x^{2}-R, R \in \mathbb{R}_{+}$.
+
+Newton-Raphson step:
+$$
+x_{t+1}=x_{t}-\frac{f\left(x_{t}\right)}{f^{\prime}\left(x_{t}\right)}=x_{t}-\frac{x_{t}^{2}-R}{2 x_{t}}=\frac{1}{2}\left(x_{t}+\frac{R}{x_{t}}\right) .
+$$
+
+Starting from $x_{0}>0$, we have
+$$
+x_{t+1}=\frac{1}{2}\left(x_{t}+\frac{R}{x_{t}}\right) \geq \frac{x_{t}}{2} .
+$$
+
+Starting from $x_{0}=R \geq 1$, it takes at least $\log (R) / 2$ steps to get $x_{t}<2 \sqrt{R}$.
+
+But still only $\O(\log R)$ steps to get $x_{t}-\sqrt{R}<1 / 2$. (\red{Proof see Hw10 Ex1})
+
+Suppose $x_{0}-\sqrt{R}<1 / 2$ (achievable after $\O(\log R)$ steps $)$.
+$$
+x_{t+1}-\sqrt{R}=\frac{1}{2}\left(x_{t}+\frac{R}{x_{t}}\right)-\sqrt{R}=\frac{1}{2 x_{t}}\left(x_{t}-\sqrt{R}\right)^{2}
+$$
+
+Assume $R \geq 1 / 4$. Then all iterates have value at least $\sqrt{R} \geq 1 / 2$. Hence we get
+$$
+\begin{gathered}
+x_{t+1}-\sqrt{R} \leq\left(x_{t}-\sqrt{R}\right)^{2} \\
+x_{T}-\sqrt{R} \leq\left(x_{0}-\sqrt{R}\right)^{2^{T}}<\left(\frac{1}{2}\right)^{2^{T}}, \quad T \geq 0 .
+\end{gathered}
+$$
+
+To get $x_{T}-\sqrt{R}<\varepsilon$, we only need $T=\log \log \left(\frac{1}{\varepsilon}\right)$ steps!
+
+
+
+
+
+
+\subsection*{Newton's method for optimization}
+\subsubsection*{1-dimensional case}
+Find a global minimum $x^{\star}$ of a twice-differentiable convex function $f: \mathbb{R} \rightarrow \mathbb{R}$.
+
+Update step:
+$$
+x_{t+1}:=x_{t}-\frac{f^{\prime}\left(x_{t}\right)}{f^{\prime \prime}\left(x_{t}\right)}=x_{t}-f^{\prime \prime}\left(x_{t}\right)^{-1} f^{\prime}\left(x_{t}\right)
+$$
+
+
+\subsubsection*{$d$-dimensional case}
+Newton's method for minimizing a convex function $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ :
+$$
+\mathbf{x}_{t+1}:=\mathbf{x}_{t}-\nabla^{2} f\left(\mathbf{x}_{t}\right)^{-1} \nabla f\left(\mathbf{x}_{t}\right)
+$$
+
+
+
+
+\subsection*{Adaptive gradient descent}
+General update scheme:
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\H\left(\mathbf{x}_{t}\right) \nabla f\left(\mathbf{x}_{t}\right),
+$$
+where $\H(\mathbf{x}) \in \mathbb{R}^{d \times d}$ is some matrix.
+
+Newton's method: $\H=\nabla^{2} f\left(\mathbf{x}_{t}\right)^{-1}$.
+
+Gradient descent: $\H=\gamma \I$.
+
+Newton's method: adaptive gradient descent, adaptation is w.r.t. the local geometry of the function at $\mathbf{x}_{t}$, as captured by the Hessian $\nabla^{2} f\left(\mathbf{x}_{t}\right)$.
+
+
+
+
+
+
+
+\subsection*{Nondegenerate quadratic function}
+A \green{nondegenerate} quadratic function is a function of the form
+$$
+f(\mathbf{x})=\frac{1}{2} \mathbf{x}^{\top} \M \mathbf{x}-\mathbf{q}^{\top} \mathbf{x}+c
+$$
+where $\M \in \mathbb{R}^{d \times d}$ is an invertible symmetric matrix, $\mathbf{q} \in \mathbb{R}^{d}, c \in R$. 
+
+Let $\mathbf{x}^{\star}=\M^{-1} \mathbf{q}$ be the unique solution of $\nabla f(\mathbf{x})=\mathbf{0}$.
+
+$\mathbf{x}^{\star}$ is the unique global minimum if $f$ is convex.
+
+
+
+
+
+
+\subsection*{Lemma 10.1 Convergence in one step on quadratic functions}
+On nondegenerate quadratic functions, with any starting point $\mathbf{x}_{0} \in \mathbb{R}^{d}$, Newton's method yields $\mathbf{x}_{1}=\mathbf{x}^{\star}$.
+
+
+
+
+
+
+
+\subsection*{Lemma 10.3 Minimizing the second-order Taylor approximation}
+Let $f$ be convex and twice differentiable at $\mathbf{x}_{t} \in \operatorname{dom}(f)$, with $\nabla^{2} f\left(\mathbf{x}_{t}\right) \succ 0$ being invertible. The vector $\mathbf{x}_{t+1}$ resulting from the Netwon step satisfies
+$$
+\begin{aligned}
+&\mathbf{x}_{t+1}=\underset{\mathbf{x} \in \mathbb{R}^{d}}{\operatorname{argmin}}\\
+&f\left(\mathbf{x}_{t}\right)+\nabla f\left(\mathbf{x}_{t}\right)^{\top}\left(\mathbf{x}-\mathbf{x}_{t}\right)+\frac{1}{2}\left(\mathbf{x}-\mathbf{x}_{t}\right)^{\top} \nabla^{2} f\left(\mathbf{x}_{t}\right)\left(\mathbf{x}-\mathbf{x}_{t}\right)
+\end{aligned}
+$$
+
+
+Alternative interpretation of Newton's method: Each step minimizes the local \green{second-order Taylor approximation}.
+
+
+
+
+
+
+\subsection*{Thm 10.4 Convergence Thm}
+Let $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ be twice differentiable with a critical point $\mathbf{x}^{\star}$. Suppose there is a ball $X \subseteq \operatorname{dom}(f)$ with center $\mathrm{x}^{\star}$, s.t.
+
+(i) \green{Bounded inverse Hessians}: There exists a real number $\mu>0$ such that
+$$
+\left\|\nabla^{2} f(\mathbf{x})^{-1}\right\| \leq \frac{1}{\mu}, \quad \forall \mathbf{x} \in X .
+$$
+
+(ii) \green{Lipschitz continuous Hessians}: There exists a real number $B>0$ such that
+$$
+\left\|\nabla^{2} f(\mathbf{x})-\nabla^{2} f(\mathbf{y})\right\| \leq B\|\mathbf{x}-\mathbf{y}\| \quad \forall \mathbf{x}, \mathbf{y} \in X .
+$$
+
+Then, for $\mathbf{x}_{t} \in X$ and $\mathbf{x}_{t+1}$ resulting from the Newton step, we have
+$$
+\left\|\mathbf{x}_{t+1}-\mathbf{x}^{\star}\right\| \leq \frac{B}{2 \mu}\left\|\mathbf{x}_{t}-\mathbf{x}^{\star}\right\|^{2}
+$$
+
+
+
+
+
+
+\subsection*{Corollary 10.5 Super-exponentially fast}
+With the assumptions and terminology of the convergence theorem, and if
+$$
+\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\| \leq \frac{\mu}{B}
+$$
+then Newton's method yields
+$$
+\left\|\mathbf{x}_{T}-\mathbf{x}^{\star}\right\| \leq \frac{\mu}{B}\left(\frac{1}{2}\right)^{2^{T}-1}, \quad T \geq 0
+$$
+
+Starting close to the critical point, we will reach distance at most $\varepsilon$ to it within $\mathcal{\O}(\log \log (1 / \varepsilon))$ steps.
+
+
+
+
+
+
+
+
+
+\subsection*{Lemma 10.6}
+With the assumptions and terminology of the convergence theorem, and if $\mathbf{x}_{0} \in X$ satisfies
+$$
+\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\| \leq \frac{\mu}{B},
+$$
+
+Then the Hessians in Newton's method satisfy the relative error bound
+$$
+\frac{\left\|\nabla^{2} f\left(\mathbf{x}_{t}\right)-\nabla^{2} f\left(\mathbf{x}^{\star}\right)\right\|}{\left\|\nabla^{2} f\left(\mathbf{x}^{\star}\right)\right\|} \leq\left(\frac{1}{2}\right)^{2^{t}-1}, \quad t \geq 0 .
+$$
+
+
+
+
+
+\subsection*{Lemma 10.7 Strong convexity $\Rightarrow$ Bounded inverse Hessians}
+Let $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ be twice differentiable and strongly convex with parameter $\mu$ over an open convex subset $X \subseteq \operatorname{dom}(f)$ meaning that
+$$
+f(\mathbf{y}) \geq f(\mathbf{x})+\nabla f(\mathbf{x})^{\top}(\mathbf{y}-\mathbf{x})+\frac{\mu}{2}\|\mathbf{x}-\mathbf{y}\|^{2}, \quad \forall \mathbf{x}, \mathbf{y} \in X
+$$
+
+Then $\nabla^{2} f(\mathbf{x})$ is invertible and $\left\|\nabla^{2} f(\mathbf{x})^{-1}\right\| \leq 1 / \mu$ for all $\mathbf{x} \in X$, where $\|\cdot\|$ is the spectral norm.
+
+
+
+
+\subsection*{Secant Method: 1-dim Case}
+Use finite difference approximation of $f^{\prime}\left(x_{t}\right)$ :
+$$
+f^{\prime}\left(x_{t}\right) \approx \frac{f\left(x_{t}\right)-f\left(x_{t-1}\right)}{x_{t}-x_{t-1}} .
+$$
+(for $\left|x_{t}-x_{t-1}\right|$ small)
+
+Obtain the \green{secant method}:
+$$
+x_{t+1}:=x_{t}-f\left(x_{t}\right) \frac{x_{t}-x_{t-1}}{f\left(x_{t}\right)-f\left(x_{t-1}\right)}
+$$
+
+
+
+
+
+
+\subsection*{Secant condition}
+Apply finite difference approximation to $f^{\prime \prime}$ (still \red{1-dim}), $\Leftrightarrow$
+$$
+\begin{gathered}
+H_{t}:=\frac{f^{\prime}\left(x_{t}\right)-f^{\prime}\left(x_{t-1}\right)}{x_{t}-x_{t-1}} \approx f^{\prime \prime}\left(x_{t}\right) \\
+f^{\prime}\left(x_{t}\right)-f^{\prime}\left(x_{t-1}\right)=H_{t}\left(x_{t}-x_{t-1}\right)
+\end{gathered}
+$$
+the \green{secant condition}.
+
+Newton's method: $x_{t+1}:=x_{t}-f^{\prime \prime}\left(x_{t}\right)^{-1} f^{\prime}\left(x_{t}\right)$
+
+Secant method: $x_{t+1}:=x_{t}-H_{t}^{-1} f^{\prime}\left(x_{t}\right)$
+
+In higher dimensions: Let $H_{t} \in \mathbb{R}^{d \times d}$ be an invertible symmetric matrix satisfying the \green{$d$-dimensional secant condition}
+$$
+\nabla f\left(\mathbf{x}_{t}\right)-\nabla f\left(\mathbf{x}_{t-1}\right)=H_{t}\left(\mathbf{x}_{t}-\mathbf{x}_{t-1}\right) .
+$$
+The secant method step then becomes
+$$
+\mathbf{x}_{t+1}:=\mathbf{x}_{t}-H_{t}^{-1} \nabla f\left(\mathbf{x}_{t}\right) .
+$$
+
+
+
+
+
+
+
+\subsection*{Quasi-Newton Methods}
+The secant method approximates Newton's method.
+\begin{itemize}[leftmargin=*]
+    \item $d=1$ : unique number $H_{t}$ satisfying the secant condition
+    \item $d>1$ : Secant condition $\nabla f\left(\mathbf{x}_{t}\right)-\nabla f\left(\mathbf{x}_{t-1}\right)=H_{t}\left(\mathbf{x}_{t}-\mathbf{x}_{t-1}\right)$ has infinitely many symmetric solutions $H_{t}$ (underdetermined linear system).
+\end{itemize}
+
+
+Any scheme of choosing in each step of the secant method a \red{symmetric} $H_{t}$ that satisfies the secant condition defines a \green{Quasi Newton method}.
+
+
+
+
+
+\subsection*{Greenstadt's family of Quasi-Newton methods}
+Given: iterates $\mathbf{x}_{t-1}, \mathbf{x}_{t}$ as well as the matrix $\H_{t-1}^{-1}$.
+Wanted: next matrix $\H_{t}^{-1}$ needed in next Quasi-Newton step
+$$
+\mathbf{x}_{t+1}:=\mathbf{x}_{t}-\H_{t}^{-1} \nabla f\left(\mathbf{x}_{t}\right) .
+$$
+
+Greenstadt: Update
+$$
+\H_{t}^{-1}:=\H_{t-1}^{-1}+\mE_{t},
+$$
+$\mE_{t}$ an error matrix.
+Try to minimize the errror subject to $\H_{t}$ satisfying the secant condition!
+Simple error measure: squared Frobenius norm
+$$
+\|\mE\|_{F}^{2}:=\sum_{i=1}^{d} \sum_{j=1}^{d} E_{i j}^{2} .
+$$
+
+More general error measure
+$$
+\left\|\A \mE \A^{\top}\right\|_{F}^{2},
+$$
+where $\A \in \mathbb{R}^{d \times d}$ is some fixed invertible transformation matrix. 
+$\A=\I$ : squared Frobenius norm of $\mE$, the "specialized" method.
+
+
+
+
+
+\subsection*{The Greenstadt Update $H_{t-1}^{-1} \rightarrow H_{t}^{-1}$}
+Secant condition in terms of $H_{t}^{-1}$ :
+$$
+H_{t}^{-1}\left(\nabla f\left(\mathbf{x}_{t}\right)-\nabla f\left(\mathbf{x}_{t-1}\right)\right)=\left(\mathbf{x}_{t}-\mathbf{x}_{t-1}\right) .
+$$
+
+Fix $t$ and simplify notation:
+$$\begin{aligned}\H &:=\H_{t-1}^{-1} &  \text { (old inverse) } \\ \H^{\prime} &:=\H_{t}^{-1} &  \text { (new inverse) } \\ \mE &:=\mE_{t}, & \text { (error matrix) } \\ \boldsymbol{\sigma} &:=\mathbf{x}_{t}-\mathbf{x}_{t-1} & \text { (step in solutions) } \\ \mathbf{y} &=\nabla f\left(\mathbf{x}_{t}\right)-\nabla f\left(\mathbf{x}_{t-1}\right) & \text { (step in gradients) } \\ \mathbf{r} &=\boldsymbol{\sigma}-H \mathbf{y} \end{aligned}$$
+The update formula is
+$$
+\H^{\prime}=\H+\mE,
+$$
+Secant condition becomes
+$$
+\begin{aligned}
+&\H^{\prime} \mathbf{y}=\boldsymbol{\sigma} \quad \Leftrightarrow \quad(\H+\mE) \mathbf{y}=\boldsymbol{\sigma} \\
+\Leftrightarrow \quad &\mE \mathbf{y}=\boldsymbol{\sigma}-\H \mathbf{y} \quad \Leftrightarrow \quad \mE \mathbf{y}=\mathbf{r}
+\end{aligned}
+$$
+
+
+
+Minimizing the error becomes a convex constrained minimization problem in the $d^{2}$ variables $E_{i j}$:
+$$\begin{array}{lll}\text { minimize } & \frac{1}{2}\left\|\A \mE \A^{\top}\right\|_{F}^{2} & \text { (error function) } \\ \text { subject to } & \mE \mathbf{y}=\mathbf{r} & \text { (secant condition) } \\ & \mE^{\top}=\mE & \text { (symmetry) }\end{array}$$
+
+Don't need to solve it computationally (for numbers $E_{i j}$), but mathematically (formula for $\E$).
+
+Minimize convex quadratic function subject to linear equations $\rightarrow$ analytic formula for the minimizer from the \green{method of Lagrange multipliers}.
+
+
+
+
+
+\subsection*{Thm 10.8 (11.1) The method of Lagrange multipliers}
+Let $f:\mathbb{R}^{d} \rightarrow \mathbb{R}$ be convex and differentiable, $\C \in \mathbb{R}^{m \times d}$ for some $m \in \mathbb{N}$,  $\vect{e} \in \mathbb{R}^{m}$, $\mathbf{x}^{\star} \in \mathbb{R}^{d}$ such that $\C \mathbf{x}^{\star}=\mathbf{e}$. Then the following two statements are equivalent.
+
+(i) $\mathbf{x}^{\star}=\operatorname{argmin}\left\{f(\mathbf{x}): \mathbf{x} \in \mathbb{R}^{d}, \C \mathbf{x}=\mathbf{e}\right\}$
+
+(ii) There exists a vector $\boldsymbol{\lambda} \in \mathbb{R}^{m}$ such that
+$$
+\nabla f\left(\mathbf{x}^{\star}\right)^{\top}=\boldsymbol{\lambda}^{\top} \C 
+$$
+
+The entries of $\boldsymbol{\lambda}$ are known as the \green{Lagrange multipliers}.
+
+
+
+
+
+\subsection*{Greenstadt method}
+Let $\M \in \mathbb{R}^{d \times d}$ be a symmetric and invertible matrix. Consider the Quasi-Newton method
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\H_{t}^{-1} \nabla f\left(\mathbf{x}_{t}\right), \quad t \geq 1,
+$$
+where $\H_{0}=\I$ (or any positive definite matrix), and $\H_{t}^{-1}=\H_{t-1}^{-1}+\mE_{t}$ for all $t \geq 1$. For any fixed $t$, set $\H:=\H_{t-1}^{-1}, \H^{\prime}:=\H_{t}^{-1}, \boldsymbol{\sigma}:=\mathbf{x}_{t}-\mathbf{x}_{t-1}, \mathbf{y}:=\nabla f\left(\mathbf{x}_{t}\right)-\nabla f\left(\mathbf{x}_{t-1}\right)$.
+
+Define
+$$
+\begin{aligned}
+\mE^{\star}=\frac{1}{\mathbf{y}^{\top} \M \mathbf{y}}\left(&\boldsymbol{\sigma} \mathbf{y}^{\top} \M\right.+\M \mathbf{y} \boldsymbol{\sigma}^{\top}-\H \mathbf{y y}^{\top} \M-\M \mathbf{y} \mathbf{y}^{\top} \H \\
+&\left.-\frac{1}{\mathbf{y}^{\top} \M \mathbf{y}}\left(\mathbf{y}^{\top} \boldsymbol{\sigma}-\mathbf{y}^{\top} \H \mathbf{y}\right) \M \mathbf{y} \mathbf{y}^{\top} \M\right)
+\end{aligned}
+$$
+
+If the update matrix $\mE_{t}=\E^{\star}$ is used, the method is called the \green{Greenstadt method} with parameter $\M$.
+
+Greenstadt suggested
+$$
+\begin{aligned}
+&\M=\I \quad(\text {default choice}) \\
+&\M=\H \quad\left(\text {previous inverse} \H_{t-1}^{-1}\right)
+\end{aligned}
+$$
+
+
+
+
+
+\subsection*{BFGS method}
+Chose $\M=\H^{\prime}$. Secant condition holds: $\M \mathbf{y}=\H^{\prime} \mathbf{y}=\boldsymbol{\sigma} . \M$ cancels.
+
+The \green{BFGS method} is the Greenstadt method with parameter $\M:=\H^{\prime}=\H_{t}^{-1}$ in step $t$, in which case the update matrix $\mE^{\star}$ assumes the form
+$$
+\begin{aligned}
+\mE^{\star} &=\frac{1}{\mathbf{y}^{\top} \boldsymbol{\sigma}}\left(2 \boldsymbol{\sigma} \boldsymbol{\sigma}^{\top}-\H \mathbf{y} \boldsymbol{\sigma}^{\top}-\boldsymbol{\sigma} \mathbf{y}^{\top} \H \right. \\
+&\quad \quad \left. -\frac{1}{\boldsymbol{\sigma}^{\top} \mathbf{y}}\left(\mathbf{y}^{\top} \boldsymbol{\sigma}-\mathbf{y}^{\top} \H \mathbf{y}\right) \boldsymbol{\sigma}^{\top}\right) \\
+&=\frac{1}{\mathbf{y}^{\top} \boldsymbol{\sigma}}\left(-\H \mathbf{y} \boldsymbol{\sigma}^{\top}-\boldsymbol{\sigma} \mathbf{y}^{\top} \H+\left(1+\frac{\mathbf{y}^{\top} \H \mathbf{y}}{\mathbf{y}^{\top} \boldsymbol{\sigma}}\right) \boldsymbol{\sigma} \boldsymbol{\sigma}^{\top}\right)
+\end{aligned}
+$$
+where $\H=\H_{t-1}^{-1}, \boldsymbol{\sigma}=\mathbf{x}_{t}-\mathbf{x}_{t-1}, \mathbf{y}=\nabla f\left(\mathbf{x}_{t}\right)-\nabla f\left(\mathbf{x}_{t-1}\right)$.
+
+
+$$
+\begin{aligned}
+\H^{\prime}=& \H + \vect{E}^* \\
+=&\H+\frac{1}{\mathbf{y}^{\top} \boldsymbol{\sigma}}\left\{-\H \mathbf{y} \boldsymbol{\sigma}^{\top}-\boldsymbol{\sigma} \mathbf{y}^{\top} \H+\left(1+\frac{\mathbf{y}^{\top} \H \mathbf{y}}{\mathbf{y}^{\top} \boldsymbol{\sigma}}\right) \boldsymbol{\sigma} \boldsymbol{\sigma}^{\top}\right\} \\
+=&\left(\I-\frac{\boldsymbol{\sigma} \mathbf{y}^{\top}}{\mathbf{y}^{\top} \boldsymbol{\sigma}}\right) \H\left(\I-\frac{\mathbf{y} \boldsymbol{\sigma}^{\top}}{\mathbf{y}^{\top} \boldsymbol{\sigma}}\right)+\frac{\boldsymbol{\sigma} \boldsymbol{\sigma}^{\top}}{\mathbf{y}^{\top} \boldsymbol{\sigma}}
+\end{aligned}
+$$
+\begin{itemize}[leftmargin=*]
+    \item $\mathbf{y}^{\top} \boldsymbol{\sigma}>0$ unless $\mathbf{x}_{t-1}=\mathbf{x}_{t}$ or $f\left(\lambda \mathbf{x}_{\mathrm{t}}+(1-\lambda) \mathbf{x}_{\mathrm{t}-1}\right)=\lambda f\left(\mathbf{x}_{\mathrm{t}}\right)+(1-\lambda) f\left(\mathbf{x}_{\mathrm{t}-1}\right)$ for all $\lambda \in(0,1)$. (\red{Proof see Hw10 Ex4(i)})
+    \item If $\mathbf{y}^{\top} \boldsymbol{\sigma}>0$ and $\H$ is positive definite, then also $\H^{\prime}$ is positive definite. In this respect, the matrices in the BFGS method behave like proper inverse Hessians. (\red{Proof see Hw10 Ex4(ii)})
+    \item Cost per update step: $\O\left(d^{2}\right)$, no Hessians and no inversions required.
+    \item Newton and Quasi-Newton methods are often performed with \melon{scaled steps}. This means that the iteration becomes
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\alpha_{t} H_{t}^{-1} \nabla f\left(\mathbf{x}_{t}\right), \quad t \geq 1,
+$$
+for some $\alpha_{t} \in \mathbb{R}_{+}$.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+\subsection*{Observation 10.9 (11.6)}
+With $\mE^{\star}$ as in the BFGS method and $\H^{\prime}=\H+\mE^{\star}$, we have
+$$
+\H^{\prime}
+$$
+
+
+
+
+
+
+\subsection*{Lemma 10.10 (11.7) Efficiently computing matrix vector-products $\H_{t}^{-1} \nabla f\left(\mathbf{x}_{t}\right)$}
+Let $\H=\H_{t-1}^{-1}, \H^{\prime}=\H_{t}^{-1}$ as in the BFGS method, i.e.
+$$
+\H^{\prime}=\left(\I-\frac{\boldsymbol{\sigma} \mathbf{y}^{\top}}{\mathbf{y}^{\top} \boldsymbol{\sigma}}\right) \H\left(\I-\frac{\mathbf{y} \boldsymbol{\sigma}^{\top}}{\mathbf{y}^{\top} \boldsymbol{\sigma}}\right)+\frac{\boldsymbol{\sigma} \boldsymbol{\sigma}^{\top}}{\mathbf{y}^{\top} \boldsymbol{\sigma}} .
+$$
+
+Let $\mathbf{g}^{\prime} \in \mathbb{R}^{d}$. Suppose that we have an oracle to compute $\mathbf{s}=\H \mathbf{g}$ for any vector $\mathbf{g}$. Then $\mathbf{s}^{\prime}=\H^{\prime} \mathbf{g}^{\prime}$ can be computed with \red{one oracle call and $\O(d)$ additional arithmetic operations}, assuming that $\sigma$ and $\mathbf{y}$ are known.
+
+
+\subsection*{The recursive BFGS-step (update step in one iteration)}
+Handout10 Page 44
+
+In iteration $t$, call BFGS-STEP$\left(t, \nabla f\left(\mathbf{x}_{t}\right)\right)$ to get $H_{t}^{-1} \nabla f\left(\mathbf{x}_{t}\right)$.
+
+Runtime $\O(t d)$.
+
+Worse than before if $t>d$.
+
+
+\subsection*{The L-BFGS method (update step in one iteration)}
+Handout10 Page 46
+
+In iteration $t$, call L-BFGS-STEP$\left(t, m, \nabla f\left(\mathbf{x}_{t}\right)\right)$ to get an approximation of $\H_{t}^{-1} \nabla f\left(\mathbf{x}_{t}\right)$ based on the previous $m$ iterations.
+
+Runtime per update $\O(d m)=\O(d)$ if $m$ is constant.

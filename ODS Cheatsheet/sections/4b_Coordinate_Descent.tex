@@ -1,0 +1,188 @@
+\section*{4b. Coordinate Descent}
+\subsection*{PL Inequality}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be a differentiable function with a global minimum $\mathbf{x}^{\star}$. We say that $f$ satisfies the \green{PL inequality} if the following holds for some $\mu>0$ :
+$$
+\frac{1}{2}\|\nabla f(\mathbf{x})\|^{2} \geq \mu\left(f(\mathbf{x})-f\left(\mathbf{x}^{\star}\right)\right), \quad \forall \mathbf{x} \in \mathbb{R}^{d}
+$$
+
+Direct consequence: $\nabla f(\mathbf{x})=\mathbf{0} \Rightarrow \mathbf{x}$ is a global min.
+
+
+\subsection*{Lemma 4b.2 Strong convexity $\Rightarrow$ PL inequality}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable and strongly convex with parameter $\mu>0$ (in particular, a global minimum $\mathrm{x}^{\star}$ exists by Lemma 3.12). Then $f$ satisfies the PL inequality for the same $\mu$.
+
+
+
+\subsection*{Thm 4b.3 GD on Smooth Func with PL Ineq}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable with a global min $\mathbf{x}^{\star}$. Suppose that $f$ is smooth with param $L$ and satisfies the PL ineq with param $\mu>0$. Choosing stepsize $\gamma=1 / L$, GD with arbitrary $\mathbf{x}_{0}$ satisfies
+$$
+\left.f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq\left(1-\frac{\mu}{L}\right)^{T}\left(f \mathbf{x}_{0}\right)-f\left(\mathbf{x}^{\star}\right)\right), \quad T>0
+$$
+
+
+
+\subsection*{Coordinate-wise Smoothness}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable, and $\mathcal{L}=\left(L_{1}, L_{2}, \ldots, L_{d}\right) \in \mathbb{R}_{+}^{d}$. Func $f$ is called \green{coordinate-wise smooth} (with param $\mathcal{L}$ ) if for every coordinate $i=1,2, \ldots, d$,
+$$
+f\left(\mathbf{x}+\lambda \mathbf{e}_{i}\right) \leq f(\mathbf{x})+\lambda \nabla_{i} f(\mathbf{x})+\frac{L_{i}}{2} \lambda^{2} \quad \forall \mathbf{x} \in \mathbb{R}^{d}, \lambda \in \mathbb{R},
+$$
+\begin{itemize}[leftmargin=*]
+    \item If $L_{i}=L$ for all $i, f$ is said to be coordinate-wise smooth with param $L$.
+    \item If $f$ is smooth with param $L$, then $f$ is coordinate-wise smooth with param $L$.
+\end{itemize}
+
+
+
+
+\subsection*{Coordinate Descent Algo}
+In Iteration $t$:
+\begin{enumerate}[label = (\roman*), leftmargin=*]
+    \item Choose some $i \in[d]$
+    \item $
+\mathbf{x}_{t+1}:=\mathbf{x}_{t}-\gamma_{i} \nabla_{i} f\left(\mathbf{x}_{t}\right) \mathbf{e}_{i}
+$
+\end{enumerate}
+
+\begin{itemize}[leftmargin=*]
+    \item $\nabla_{i} f\left(\mathbf{x}_{t}\right)$ is the $i$-th entry of the gradient ($i$-th partial derivate).
+    \item $ \mathbf{e}_{i}$ is the $i$-th unit vector, so only the $i$-th coordinate of $\mathbf{x}_{t}$ is updated.
+    \item $\gamma_{i}$ is the stepsize for coordinate $i$.
+\end{itemize}
+
+
+
+
+\subsection*{Lemma 4b.5 Coordinate-wise Sufficient Decrease}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable and coordinate-wise smooth with parameter $\mathcal{L}=\left(L_{1}, L_{2}, \ldots, L_{d}\right)$. With active coordinate $i$ in iteration $t$ and stepsize $\gamma_{i}=\frac{1}{L_{i}}$, coordinate descent satisfies
+$$
+f\left(\mathbf{x}_{t+1}\right) \leq f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L_{i}}\left\|\nabla_{i} f\left(\mathbf{x}_{t}\right)\right\|^{2}
+$$
+
+
+
+\subsection*{Randomized Coordinate Descent}
+\begin{enumerate}[label = (\roman*), leftmargin=*]
+    \item sample $i \in[d]$ uniformly at random
+    \item $
+\mathbf{x}_{t+1}:=\mathbf{x}_{t}-\gamma_{i} \nabla_{i} f\left(\mathbf{x}_{t}\right) \mathbf{e}_{i}
+$
+\end{enumerate}
+
+\subsubsection*{Thm 4b.6 Randomized Coordinate Descent: Smooth Func, PL inequality}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable with a global minimum $\mathbf{x}^{\star}$. Suppose that $f$ is coordinate-wise smooth with parameter $L$ and satisfies the $\mathrm{PL}$ inequality with parameter $\mu>0$. Choosing stepsize $\gamma_{i}=1 / L$ for all coordinates, randomized coordinate descent with arbitrary $\mathbf{x}_{0}$ satisfies
+$$
+\mathbb{E}\left[f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right)\right] \leq\left(1-\frac{\mu}{d L}\right)^{T}\left(f\left(\mathbf{x}_{0}\right)-f\left(\mathbf{x}^{\star}\right)\right)
+$$
+
+
+
+
+
+
+
+\subsection*{Importance Sampling}
+Improves over uniform sampling when coordinate-wise smoothness parameters $L_{i}$ differ.
+\begin{enumerate}[label = (\roman*), leftmargin=*]
+\item $\text{sample} i \in[d] \text { with probability } \frac{L_{i}}{\sum_{j=d}^{d} L_{j}}$
+\item $\mathbf{x}_{t+1}:=\mathbf{x}_{t}-\frac{1}{L_{i}} \nabla_{i} f\left(\mathbf{x}_{t}\right) \mathbf{e}_{i}$
+\end{enumerate}
+
+\subsubsection*{Thm 4b.7 Convergence of Importance Sampling}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable with a global min $\mathbf{x}^{\star}$, coordinate-wise smooth with param $\mathcal{L}=\left(L_{1}, L_{2}, \ldots, L_{d}\right)$, and satisfying the PL ineq with param $\mu>0$. Let $\bar{L}=\frac{1}{d} \sum_{i=1}^{d} L_{i}$. Then coordinate descent with \green{importance sampling} and arbitrary $\mathbf{x}_{0}$ satisfies
+$$
+\mathbb{E}\left[f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right)\right] \leq\left(1-\frac{\mu}{d \bar{L}}\right)^{T}\left(f\left(\mathbf{x}_{0}\right)-f\left(\mathbf{x}^{\star}\right)\right)
+$$
+
+\subsubsection*{Corollary 4b.8}
+Same number of iterations as randomized coordinate descent.
+
+
+
+
+
+
+\subsection*{Strong convexity wrt $\ell_{1}$-norm}
+\begin{itemize}[leftmargin=*]
+    \item Measure strong convexity wrt $\ell_{1}$-norm instead of $\ell_{2}$-norm:
+$$
+f(\mathbf{y}) \geq f(\mathbf{x})+\nabla f(\mathbf{x})^{\top}(\mathbf{y}-\mathbf{x})+\frac{\mu_{1}}{2}\|\mathbf{y}-\mathbf{x}\|_{1}^{2}, \quad \mathbf{x}, \mathbf{y} \in \mathbb{R}^{d}
+$$
+    \item Then $f$ is also strongly convex with $\mu=\mu_{1}$ in the usual sense.
+    
+        Proof: $\|\mathbf{y}-\mathbf{x}\|_{1} \geq\|\mathbf{y}-\mathbf{x}\|_2$
+    \item If $f$ is strongly convex with $\mu$ in the usual sense, then $f$ is strongly convex with $\mu_{1}=\mu / d$ w.r.t. $\ell_{1}$-norm.
+    
+Proof: $\|\mathbf{y}-\mathbf{x}\| \geq\|\mathbf{y}-\mathbf{x}\|_{1} / \sqrt{d}$
+    \item $\mu \geq \mu_{1} \geq \mu / d$
+    \item If $\mu_{1}>\mu / d$, we can speed up steepest coordinate descent.
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Lemma 4b.9 Strong convexity w.r.t. $\ell_{1}$-norm $\Rightarrow$ PL inequality w.r.t. $\ell_{\infty}$-norm}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable and strongly convex with parameter $\mu_{1}>0$ w.r.t. $\ell_{1}$-norm. (In particular, $f$ is $\mu_{1}$-strongly convex w.r.t. Euclidean norm, so a global minimum $\mathrm{x}^{\star}$ exists by Lemma 3.12). Then $f$ satisfies the $\mathrm{PL}$ inequality w.r.t. $\ell_{\infty}$-norm with the same $\mu_{1}$ :
+$$
+\frac{1}{2}\|\nabla f(\mathbf{x})\|_{\infty}^{2} \geq \mu_{1}\left(f(\mathbf{x})-f\left(\mathbf{x}^{\star}\right)\right), \quad \forall \mathbf{x} \in \mathbb{R}^{d}
+$$
+
+
+
+
+
+
+
+\subsection*{Thm 4b.10 Steeper (than steepest) coordinate descent}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable with a global minimum $\mathbf{x}^{\star}$. Suppose that $f$ is coordinate-wise smooth with parameter $L$ and satisfies the $\mathrm{PL}$ inequality w.r.t. $\ell_{\infty}$-norm with parameter $\mu_{1}>0$. Choosing stepsize $\gamma_{i}=1 / L$, steepest coordinate descent with arbitrary $\mathbf{x}_{0}$ satisfies
+$$
+f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq\left(1-\frac{\mu_{1}}{L}\right)^{T}\left(f\left(\mathbf{x}_{0}\right)-f\left(\mathbf{x}^{\star}\right)\right), \quad T>0
+$$
+\begin{itemize}[leftmargin=*]
+    \item Normal steepest coordinate descent: $\left(1-\frac{\mu}{d L}\right)$.
+    \item Worst case: $\mu_{1}=\mu / d$, no speedup.
+    \item Best case: $\mu_{1}=\mu$, speedup by a factor of $d$.
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Greedy Coordinate Descent}
+Make the step that maximizes the progress in the chosen coordinate!
+\begin{enumerate}[label = (\roman*), leftmargin=*]
+    \item $\text { choose } i \in[d]$
+    \item $\mathbf{x}_{t+1}:=\underset{\lambda \in \mathbb{R}}{\operatorname{argmin}} f\left(\mathbf{x}_{t}+\lambda \mathbf{e}_{i}\right)$
+\end{enumerate}
+This requires to perform a \green{line search}.
+\subsubsection*{Thm 4b.11}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be of the form
+$$
+f(\mathbf{x}):=g(\mathbf{x})+h(\mathbf{x}) \quad \text { with } h(\mathbf{x})=\sum_{i} h_{i}\left(x_{i}\right), \quad \mathbf{x} \in \mathbb{R}^{d}
+$$
+with $g$ convex and differentiable, and the $h_{i}$ convex. Let $\mathbf{x} \in \mathbb{R}^{d}$ be a point such that greedy coordinate descent cannot make progress in any coordinate. Then $\mathbf{x}$ is a global minimum of $f$.
+
+A function $h$ as in the theorem is called \green{separable}.
+
+Popular examples: \green{regularizers} $h(\mathbf{x})=\|\mathbf{x}\|_{1}$ and $h(\mathbf{x})=\|\mathbf{x}\|^{2}$.
+
+
+
+
+
+
+\subsection*{Summary}
+\begin{tabular}{l|c|c|c|c} 
+Algo & Norm & Smooth & Bound & Result \\
+\hline Rand & $\ell_{2}$ & $L$ & $1-\frac{\mu}{d L}$ & Thm 4b.6 \\
+IS & $\ell_{2}$ & $L_{1} \ldots, L_{d}$ & $1-\frac{\mu}{d \bar{L}}$ & Thm 4b.7 \\
+Steepest & $\ell_{2}$ & $L$ & $1-\frac{\mu}{d L}$ & Coro 4b.8 \\
+Steeper & $\ell_{1}$ & $L$ & $1-\frac{\mu_1}{L}$ & Thm 4b.10
+\end{tabular}
+In the worst case, nothing is gained over gradient descent, and Steepest may even lose. 
+
+In the best case, Importance sampling and Steeper (than Steepest) may be up to $d$ times faster than gradient descent.
+
+

@@ -1,0 +1,165 @@
+\section*{8. Nonconvex Functions}
+\subsection*{Concave functions}
+$f$ is called \green{concave} if $-f$ is convex.
+
+For all $\mathbf{x}$, the graph of a differentiable concave function is \melon{below} the tangent hyperplane at $\mathbf{x}$.
+
+$\Rightarrow$ concave functions are smooth with $L=0$... but boring from an optimization point of view (no global minimum), gradient descent runs off to infinity
+
+
+
+\subsection*{Lemma 8.1 Bounded Hessians $\Rightarrow$ smooth}
+Let $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ be twice differentiable, with $X \subseteq \operatorname{dom}(f)$ a convex set, and $\left\|\nabla^{2} f(\mathbf{x})\right\| \leq L$ for all $\mathbf{x} \in X$, where $\|\cdot\|$ is spectral norm. Then $f$ is smooth with parameter $L$ over $X$.
+
+\melon{Examples}:
+\begin{itemize}[leftmargin=*]
+    \item all quadratic functions $f(\mathbf{x})=\mathbf{x}^{\top} A \mathbf{x}+\mathbf{b}^{\top} \mathbf{x}+c$
+    \item $f(x)=\sin (x)$ (many global minima)
+\end{itemize}
+
+
+
+\subsection*{Thm 8.2 Gradient descent on smooth (not necessarily convex) functions}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable with a global minimum $\mathbf{x}^{\star}$; furthermore, suppose that $f$ is smooth with parameter $L$ according to Definition 3.2. Choosing stepsize
+$
+\gamma:=\frac{1}{L}
+$. Gradient descent yields
+$$
+\frac{1}{T} \sum_{t=0}^{T-1}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2} \leq \frac{2 L}{T}\left(f\left(\mathbf{x}_{0}\right)-f\left(\mathbf{x}^{\star}\right)\right), \quad T>0
+$$.
+
+In particular, $\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2} \leq \frac{2 L}{T}\left(f\left(\mathbf{x}_{0}\right)-f\left(\mathbf{x}^{\star}\right)\right)$ for some $t \in\{0, \ldots, T-1\}$. 
+
+\subsubsection*{Corollary of Thm 8.2}
+\melon{Thm 8.2} implies that
+$$
+\lim _{t \rightarrow \infty}\left\|\nabla f\left(\x_{t}\right)\right\|^{2}=0 .
+$$
+
+
+
+
+
+\subsection*{Lemma 8.3 No overshooting}
+In the smooth setting, and with stepsize $1 / L$, gradient descent cannot \green{overshoot}, i.e. pass a critical point.
+
+
+
+
+
+
+\subsection*{Local Optimality Problem}
+Let $\mathcal{F}$ be a class of functions from $\mathbb{R}^{n}$ to $\mathbb{R}$.
+
+The problem $\operatorname{LocMin}(\mathcal{F})$ is to decide whether $\mathbf{0}$ is a local minimum of a given function $\phi \in \mathcal{F}$.
+
+\subsubsection*{Thm (Murty and Kabadi [MK87])}
+The problem $\operatorname{LOCMIN}(\mathcal{F})$ is \green{coNP-complete} for the class $\mathcal{F}:=\left\{\phi_{\M}: \M\right.$ symmetric$\}$, where the function $\phi_{M}$ is defined by
+$$
+\phi_{M}(\mathbf{x})=\left(\mathbf{x}^{2}\right)^{\top} \M\left(\mathbf{x}^{2}\right)
+$$
+with $\mathbf{x}^{2}=\left(x_{1}^{2}, x_{2}^{2}, \ldots, x_{n}^{2}\right)$
+
+
+\navy{Proof outline}:
+
+$\mathbf{0}$ is a local minimum \red{iff} the matrrix $\M$ is \green{copositive}.
+
+Deciding whether $\M$ is copositive is coNP-complete.
+
+
+
+
+
+
+
+
+\subsection*{Copositive matrices}
+\subsubsection*{Lemma}
+$\mathbf{0}$ is a local minimum of $\left(\mathbf{x}^{2}\right)^{\top} \M\left(\mathbf{x}^{2}\right)$ \red{iff} $\mathbf{x}^{\top} \M \mathbf{x} \geq 0$ for all $\mathbf{x} \geq \mathbf{0}$.
+
+A matrix $\M$ satisfying $\mathbf{x}^{\top} \M \mathbf{x} \geq 0$ for all $\mathbf{x} \geq \mathbf{0}$ is called \green{copositive}.
+
+If $\M$ is positive semidefinite $\left(\mathbf{x}^{\top} M \mathbf{x} \geq 0\right.$ for all $\left.\mathbf{x}\right)$, then $\M$ is copositive. The converse is false.
+
+\subsubsection*{Proof}
+$$
+\begin{aligned}
+&\mathbf{0} \text{ is a local minimum}\\
+\Leftrightarrow& \left(\mathbf{x}^{2}\right)^{\top} \M\left(\mathbf{x}^{2}\right) \geq 0 \text { for all } \mathbf{x} \text { in some neighborhood of } \mathbf{0} \\
+\Leftrightarrow&  \mathbf{x}^{\top} \M \mathbf{x} \geq 0 \text { for all } \mathbf{x} \geq \mathbf{0} \text { in some neighborhood of } \mathbf{0} \\
+\Leftrightarrow& \mathbf{x}^{\top} \M \mathbf{x} \geq 0 \text { for all } \mathbf{x} \geq \mathbf{0}
+\end{aligned}
+$$
+
+
+
+
+
+
+
+\subsection*{Def 8.4 $c$-balanced}
+Let $\mathbf{x}>\mathbf{0}$ (componentwise), and let $c \geq 1$ be a real number. $\mathbf{x}$ is called \green{$c$-balanced} if $x_{i} \leq c x_{j}$ for all $1 \leq i, j \leq d$.
+
+Any initial iterate $\mathbf{x}_{0}>\mathbf{0}$ is $c$-balanced for some (possibly large) $c$.
+
+
+
+
+
+
+
+
+\subsection*{Lemma 8.5 Balanced iterates}
+Let $\mathbf{x}>\mathbf{0}$ be $c$-balanced with $\prod_{k} x_{k} \leq 1$. Then for any stepsize $\gamma>0$,
+$\mathbf{x}^{\prime}:=\mathbf{x}-\gamma \nabla f(\mathbf{x})$ satisfies $\mathbf{x}^{\prime} \geq \mathbf{x}$ (componentwise) and is also $c$-balanced.
+
+
+
+
+\subsection*{Lemma 8.6}
+Suppose that $\mathbf{x}>\mathbf{0}$ is $c$-balanced. Then for any $I \subseteq\{1, \ldots, d\}$, we have
+$$
+\left(\frac{1}{c}\right)^{|I|}\left(\prod_{k} x_{k}\right)^{1-|I| / d} \leq \prod_{k \notin I} x_{k} \leq c^{|I|}\left(\prod_{k} x_{k}\right)^{1-|I| / d}
+$$
+
+
+
+
+
+\subsection*{Lemma 8.7}
+Let $\mathbf{x}>\mathbf{0}$ be $c$-balanced with $\prod_{k} x_{k} \leq 1$. Then
+$$
+\left\|\nabla^{2} f(\mathbf{x})\right\|_2 \leq\left\|\nabla^{2} f(\mathbf{x})\right\|_{F} \leq 3 d c^{2}
+$$
+where $\|\cdot\|_{F}$ is the Frobenius norm and $\|\cdot\|_2$ the spectral norm.
+
+
+
+
+\subsection*{Lemma 8.8}
+Let $\mathbf{x}>\mathbf{0}$ be $c$-balanced with $\prod_{k} x_{k}<1, L=3 d c^{2}$. Let $\gamma:=1 / L$. We already know from Lemma $8.5$ that
+$
+\mathbf{x}^{\prime}:=\mathbf{x}-\gamma \nabla f(\mathbf{x}) \geq \mathbf{x}
+$
+is $c$-balanced. 
+
+Furthermore, \melon{$f$ is smooth with parameter $L$ over the line segment connecting $\mathbf{x}$ and $\mathbf{x}^{\prime}$}. Lemma $8.3$ (no overshooting) then also yields $\prod_{k} x_{k}^{\prime} \leq 1$.
+
+
+
+
+\subsection*{Thm 8.9 Convergence of Balanced Iterates}
+Let $c \geq 1$ and $\delta>0$ such that $\mathbf{x}_{0}>\mathbf{0}$ is $c$-balanced with $\delta \leq \prod_{k}\left(\mathbf{x}_{0}\right)_{k}<1$. Choosing stepsize
+$
+\gamma=\frac{1}{3 d c^{2}}
+$, gradient descent satisfies
+$$
+f\left(\mathbf{x}_{T}\right) \leq\left(1-\frac{\delta^{2}}{3 c^{4}}\right)^{T} f\left(\mathbf{x}_{0}\right), \quad T \geq 0
+$$
+
+Error converges to 0 exponentially fast.
+
+
+\subsubsection*{Corollary of Thm 8.9}
+The sequence $\left(\mathbf{x}_{\mathrm{T}}\right)_{\mathrm{T} \geq 0}$ of iterates in Thm $8.9$ converges to a an optimal solution $\mathrm{x}^{\star}$.

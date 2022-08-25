@@ -1,0 +1,358 @@
+\section*{13. Min-Max Optimization}
+\pink{13.1 Min-Max Optimization}
+
+
+
+\subsection*{Min-Max Optimization}
+Let $\mathcal{X} \subset \mathbb{R}^{d}, \mathcal{Y} \subset \mathbb{R}^{p}$ and $\phi: \mathcal{X} \times \mathcal{Y} \rightarrow \mathbb{R}$. Consider the min-max problem:
+$$
+\min _{\mathbf{x} \in \mathcal{X}} \max _{\mathbf{y} \in \mathcal{Y}} \phi(\mathbf{x}, \mathbf{y})
+$$
+
+
+
+\subsection*{Zero-sum Matrix Games}
+2-players games where players have opposite evaluations of outcomes:
+\begin{itemize}[leftmargin=*]
+    \item $I$ (resp. $J$ ) non-empty finite set of strategies of player 1 (resp. player 2 ).
+    \item payoff of player 1 given by a real-valued $I \times J$ matrix $\mathbf{A}$ (resp. $-\mathbf{A}$ for player 2 ).
+    \item Set of mixed strategies $\Delta(I)=\left\{\mathbf{x} \in \mathbb{R}^{|I|}: \mathbf{x}_{i} \geq 0, i \in I, \sum_{i \in I} \mathbf{x}_{i}=1\right\}$ of player 1 (resp. $\Delta(J)$ for player 2$)$.
+    $$\min _{\mathbf{x} \in \Delta(I)} \max _{\mathbf{y} \in \Delta(J)} \mathbf{x}^{T} \mathbf{A} \mathbf{y}$$
+\end{itemize}
+
+
+
+\subsection*{Nonsmooth Optimization}
+Let $f, g$ be convex nonsmooth functions, $\mathbf{A} \in \mathbb{R}^{p \times d}$ a matrix and consider the problem:
+$$
+\min _{\mathbf{x} \in \mathbb{R}^{d}} f(\mathbf{x})+g(\mathbf{A} \mathbf{x})
+$$
+
+Recall that $g(\mathbf{A} \mathbf{x})=\max _{\mathbf{y} \in \mathbb{R}^{p}}\langle\mathbf{A} \mathbf{x}, \mathbf{y}\rangle-g^{*}(\mathbf{y})$ where $g^{*}$ is the Fenchel conjugate.
+
+Then the problem is equivalent to \green{Min-Max reformulation}:
+$$
+\min _{\mathbf{x} \in \mathbb{R}^{d}} \max _{\mathbf{y} \in \mathbb{R}^{p}} f(\mathbf{x})+\langle\mathbf{A} \mathbf{x}, \mathbf{y}\rangle-g^{*}(\mathbf{y})
+$$
+
+\melon{Examples}: $g(\mathbf{z})=\|\mathbf{z}-\mathbf{b}\|_{1}, g(\mathbf{z})=\|\mathbf{z}-\mathbf{b}\|_{2}^{2}$ or $g(\mathbf{z})=\iota_{\{\mathbf{b}\}}(\mathbf{z})$ (=0 if $\mathbf{z}=\mathbf{b}$, $+\infty$ otherwise) for which the Fenchel conjugate can be explicitly computed.
+
+
+
+\pink{13.2 Saddle Points and Global Minimax Points}
+\subsection*{Saddle Points}
+Consider the min-max problem:
+$$\min _{\mathbf{x} \in \mathcal{X}} \max _{\mathbf{y} \in \mathcal{Y}} \phi(\mathbf{x}, \mathbf{y})$$
+
+
+$\left(\mathbf{x}^{*}, \mathbf{y}^{*}\right)$ is a \green{saddle point} if $\phi\left(\mathbf{x}^{*}, \mathbf{y}\right) \leq \phi\left(\mathbf{x}^{*}, \mathbf{y}^{*}\right) \leq \phi\left(\mathbf{x}, \mathbf{y}^{*}\right)$ for any $\mathbf{x} \in \mathcal{X}, \mathbf{y} \in \mathcal{Y}$
+\begin{itemize}[leftmargin=*]
+    \item Game interpretation: \green{Nash equilibrium}
+    \item No player has the incentive to make unilateral change at NE.
+    \item Simultaneous game
+\end{itemize}
+
+
+
+
+
+\subsection*{Global Minimax Points}
+$\left(\mathbf{x}^{*}, \mathbf{y}^{*}\right)$ is a \green{global minimax point} if $\phi\left(\mathbf{x}^{*}, \mathbf{y}\right) \leq \phi\left(\mathbf{x}^{*}, \mathbf{y}^{*}\right) \leq \max _{\mathbf{y}^{\prime} \in \mathcal{Y}} \phi\left(\mathbf{x}, \mathbf{y}^{\prime}\right)$
+for any $\mathbf{x} \in \mathcal{X}, \mathbf{y} \in \mathcal{Y}$
+\begin{itemize}[leftmargin=*]
+    \item Game interpretation: \green{Stackelberg equilibrium}
+    \item Best response to the best response.
+    \item Sequential game
+\end{itemize}
+
+
+
+
+
+\subsection*{Primal and Dual Problems}
+$(P): \displaystyle\quad \min _{\mathbf{x} \in \mathcal{X}} \max _{\mathbf{y} \in \mathcal{Y}} \phi(\mathbf{x}, \mathbf{y}):=\min _{\mathbf{x} \in \mathcal{X}} \bar{\phi}(\mathbf{x})$
+
+$(D): \displaystyle \quad \max _{\mathbf{y} \in \mathcal{Y}} \min _{\mathbf{x} \in \mathcal{X}} \phi(\mathbf{x}, \mathbf{y}):=\max _{\mathbf{y} \in \mathcal{Y}} \underline{\phi}(\mathbf{y})$
+
+
+
+
+
+\subsection*{Max-Min Inequality}
+$\displaystyle \max _{\mathbf{y} \in \mathcal{Y}} \min _{\mathbf{x} \in \mathcal{X}} \phi(\mathbf{x}, \mathbf{y}) \leq \min _{\mathbf{x} \in \mathcal{X}} \max _{\mathbf{y} \in \mathcal{Y}} \phi(\mathbf{x}, \mathbf{y})$
+
+
+
+
+\subsection*{Lemma 12.1 Characterization of Saddle Points}
+$\left(\mathbf{x}^{*}, \mathbf{y}^{*}\right)$ is a saddle point \red{iff}
+$$
+\max _{\mathbf{y} \in \mathcal{Y}} \min _{\mathbf{x} \in \mathcal{X}} \phi(\mathbf{x}, \mathbf{y}) =\min _{\mathbf{x} \in \mathcal{X}} \max _{\mathbf{y} \in \mathcal{Y}} \phi(\mathbf{x}, \mathbf{y}) \\
+$$
+and $\mathbf{x}^{*} \in \operatorname{argmin}_{\mathbf{x} \in \mathcal{X}} \bar{\phi}(\mathbf{x}), \ \mathbf{y}^{*} \in \operatorname{argmax}_{\mathbf{y} \in \mathcal{Y}} \underline{\phi}(\mathbf{y})$
+
+
+
+Invoking the definition of saddle point, we have
+$$
+\begin{aligned}
+   \max_{\y \in \mathcal{Y}}\min _{\mathbf{x} \in \mathcal{X}} \phi\left(\mathbf{x}, \mathbf{y}\right) &\geq \min _{\mathbf{x} \in \mathcal{X}} \phi\left(\mathbf{x}, \mathbf{y}^{*}\right) \geq \phi\left(\mathbf{x}^{*}, \mathbf{y}^{*}\right) \\
+   &\geq \max _{\mathbf{y} \in \mathcal{Y}} \phi\left(\mathbf{x}^{*}, \mathbf{y}\right) 
+   \geq \min_{\x \in \mathcal{X}} \max _{\mathbf{y} \in \mathcal{Y}} \phi\left(\mathbf{x}, \mathbf{y}\right) 
+\end{aligned}
+$$
+
+
+
+\pink{13.3 Convex-Concave Min-Max Optimization}
+\subsection*{Convex-concave function}
+A function $\phi(\mathbf{x}, \mathbf{y}): \mathcal{X} \times \mathcal{Y} \rightarrow \mathbb{R}$ is \green{convex-concave} if
+\begin{itemize}[leftmargin=*]
+    \item $\phi(\mathbf{x}, \mathbf{y})$ is convex in $\mathbf{x} \in \mathcal{X}$ for every fixed $\mathbf{y} \in \mathcal{Y}$;
+    \item $\phi(\mathbf{x}, \mathbf{y})$ is concave in $\mathbf{y} \in \mathcal{Y}$ for every fixed $\mathbf{x} \in \mathcal{X}$.
+\end{itemize}
+
+
+
+
+
+
+
+\subsection*{Strongly-convex-strongly-concave function}
+A function $\phi(\mathbf{x}, \mathbf{y}): \mathcal{X} \times \mathcal{Y} \rightarrow \mathbb{R}$ is strongly-convex-strongly-concave if there exist constants $\mu_{1}, \mu_{2}>0$ such that
+\begin{itemize}[leftmargin=*]
+    \item $ \phi(\mathbf{x}, \mathbf{y})$ is $\mu_{1}$-strongly convex in $\mathbf{x} \in \mathcal{X}$ for every fixed $\mathbf{y} \in \mathcal{Y}$;
+    \item $ \phi(\mathbf{x}, \mathbf{y})$ is $\mu_{2}$-strongly concave in $\y \in \mathcal{Y}$ for every fixed $\mathbf{x} \in \mathcal{X}$.
+\end{itemize}
+
+
+
+
+
+\subsection*{Thm 12.4 Minimax Theorem}
+If $\mathcal{X}$ and $\mathcal{Y}$ are closed convex sets and one of them is bounded, and $\phi(\mathbf{x}, \mathbf{y})$ is a continuous convex-concave function, then there exists a saddle point on $\mathcal{X} \times \mathcal{Y}$ and
+$$
+\max _{\mathbf{y} \in \mathcal{Y}} \min _{\mathbf{x} \in \mathcal{X}} \phi(\mathbf{x}, \mathbf{y})=\min _{\mathbf{x} \in \mathcal{X}} \max _{\mathbf{y} \in \mathcal{Y}} \phi(\mathbf{x}, \mathbf{y})
+$$
+
+Here $\x, \y$ are arbitrary values, not necessarily a saddle point.
+
+
+
+
+
+
+\pink{13.4 First-order Methods}
+\subsection*{Duality Gap: Accuracy Measure of Minimax Optimization}
+For convex-concave minimax optimization, saddle points exist.
+
+We measure the optimality via the \green{duality gap}.
+$$
+\text { duality gap }:=\max _{\mathbf{y} \in \mathcal{Y}} \phi(\hat{\mathbf{x}}, \mathbf{y})-\min _{\mathbf{x} \in \mathcal{X}} \phi(\mathbf{x}, \hat{\mathbf{y}}) \geq 0 \text {. }
+$$
+\begin{itemize}[leftmargin=*]
+    \item When duality gap $=0,(\hat{\mathbf{x}}, \hat{\mathbf{y}})$ is a saddle point.
+    \item When duality gap $\leq \epsilon,(\hat{\mathbf{x}}, \hat{\mathbf{y}})$ is an $\epsilon$-saddle point.
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Gradient Descent Ascent (GDA)}
+$$
+\begin{aligned}
+    \mathbf{x}_{t+1}&=\Pi_{\mathcal{X}}\left(\mathbf{x}_{t}-\gamma \nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{t}, \mathbf{y}_{t}\right)\right) \\
+    \mathbf{y}_{t+1}&=\Pi_{\mathcal{Y}}\left(\mathbf{y}_{t}+\gamma \nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{t}, \mathbf{y}_{t}\right)\right)
+\end{aligned}
+$$
+
+
+\subsubsection*{Strongly-Convex-Strongly-Concave (SC-SC) Setting}
+\begin{itemize}[leftmargin=*]
+    \item $\mu$-strongly convex about $\mathbf{x}$ and strongly concave about $\mathbf{y}$ :
+$$
+\begin{aligned}
+\left.\phi\left(\mathbf{x}_{1}, \mathbf{y}\right) &\geq \phi\left(\mathbf{x}_{2}, \mathbf{y}\right)+\nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{2}, \mathbf{y}\right)^{\top}\left(\mathbf{x}_{1}-\mathbf{x}_{2}\right)\right) \\
+& \quad \quad+\frac{\mu}{2}\left\|\mathbf{x}_{1}-\mathbf{x}_{2}\right\|^{2} \\
+-\phi\left(\mathbf{x}_{1}, \mathbf{y}_{1}\right) &\geq-\phi\left(\mathbf{x}, \mathbf{y}_{2}\right)-\nabla_{\mathbf{y}} \phi\left(\mathbf{x}, \mathbf{y}_{2}\right)^{\top}\left(\mathbf{y}_{1}-\mathbf{y}_{2}\right)\\
+& \quad \quad+\frac{\mu}{2}\left\|\mathbf{y}_{1}-\mathbf{y}_{2}\right\|^{2}
+\end{aligned}
+$$
+    \item $l$-Lipschitz smooth jointly in $\mathbf{x}$ and $\mathbf{y}$ :
+$$
+\begin{aligned}
+&\left\|\nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{1}, \mathbf{y}_{1}\right)-\nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{2}, \mathbf{y}_{2}\right)\right\| \\
+\leq& L\left(\left\|\mathbf{x}_{1}-\mathbf{x}_{2}\right\|+\left\|\mathbf{y}_{1}-\mathbf{y}_{2}\right\|\right) \\
+&\left\|\nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{1}, \mathbf{y}_{1}\right)-\nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{2}, \mathbf{y}_{2}\right)\right\| \\
+\leq& L\left(\left\|\mathbf{x}_{1}-\mathbf{x}_{2}\right\|+\left\|\mathbf{y}_{1}-\mathbf{y}_{2}\right\|\right)
+\end{aligned}
+$$
+    \item There exists a unique saddle point $\left(\mathbf{x}^{*}, \mathbf{y}^{*}\right)$
+\end{itemize}
+
+
+
+
+
+\subsection*{Thm 12.5 Convergence of GDA for SC-SC Setting}
+In SC-SC setting, GDA with stepsize $\eta<\frac{\mu}{2 L^{2}}$ converges linearly:
+$$
+\begin{aligned}
+&\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|^{2}+\left\|\mathbf{y}_{t+1}-\mathbf{y}^{*}\right\|^{2} \\
+\leq &\left(1+4 \eta^{2} L^{2}-2 \eta \mu\right)\left(\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|^{2}+\left\|\mathbf{y}_{t}-\mathbf{y}^{*}\right\|^{2}\right)
+\end{aligned}
+$$
+When $\eta=\frac{\mu}{4 L^{2}}$,
+$$
+\begin{aligned}
+&\left\|\mathbf{x}_{T}-\mathbf{x}^{*}\right\|^{2}+\left\|\mathbf{y}_{T}-\mathbf{y}^{*}\right\|^{2} \\
+\leq &\left(1-4 \mu^{2} / L^{2}\right)^{\top}\left(\left\|\mathbf{x}_{0}-\mathbf{x}^{*}\right\|^{2}+\left\|\mathbf{y}_{0}-\mathbf{y}^{*}\right\|^{2}\right)
+\end{aligned}
+$$
+
+It implies a complexity of $\O\left(\kappa^{2} \log \frac{1}{\epsilon}\right)$ with $\kappa=L / \mu$ being condition number.
+
+
+
+
+
+
+\subsection*{Extragradient (EG)}
+$$
+\begin{aligned}
+&\mathbf{x}_{t+\frac{1}{2}}=\Pi_{\mathcal{X}}\left(\mathbf{x}_{t}-\eta \nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{t}, \mathbf{y}_{t}\right)\right) \\
+&\mathbf{y}_{t+\frac{1}{2}}=\Pi_{\mathcal{Y}}\left(\mathbf{y}_{t}+\eta \nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{t}, \mathbf{y}_{t}\right)\right) \\
+&\mathbf{x}_{t+1}=\Pi_{\mathcal{X}}\left(\mathbf{x}_{t}-\eta \nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{t+\frac{1}{2}}, \mathbf{y}_{t+\frac{1}{2}}\right)\right) \\
+&\mathbf{y}_{t+1}=\Pi_{\mathcal{Y}}\left(\mathbf{y}_{t}+\eta \nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{t+\frac{1}{2}}, \mathbf{y}_{t+\frac{1}{2}}\right)\right)
+\end{aligned}
+$$
+
+
+
+
+
+\subsection*{Thm 12.6 EG for C-C Setting}
+Assume $\phi$ is convex-concave, L-Lipschitz smooth, $\mathcal{X}$ has diameter $D_{\mathcal{X}}$, and $\mathcal{Y}$ has diameter $D_{\mathcal{Y}}$, then $E G$ with stepsize $\eta \leq \frac{1}{2 L}$ satisfies
+$$
+\max _{\mathbf{y} \in \mathcal{Y}} \phi\left(\frac{1}{T} \sum_{t=1}^{T} \mathbf{x}_{t+\frac{1}{2}}, \mathbf{y}\right)-\min _{\mathbf{x} \in \mathcal{X}} \phi\left(\mathbf{x}, \frac{1}{T} \sum_{t=1}^{T} \mathbf{y}_{t+\frac{1}{2}}\right) \leq \frac{D_{\mathcal{X}}^{2}+D_{\mathcal{Y}}^{2}}{2 \eta T}
+$$
+
+$\O(1 / T)$ convergence rate for averaged iterates at "mid-point".
+
+$\O(1 / T)$ rate is optimal.
+
+
+
+
+
+\subsection*{Thm 12.7}
+In SC-SC setting, EG with stepsize $\eta=\frac{1}{8 L}$ converges linearly:
+$$
+\begin{aligned}
+&\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|^{2}+\left\|\mathbf{y}_{t+1}-\mathbf{y}^{*}\right\|^{2}\\
+\leq& \left(1-\frac{\mu}{4 L}\right)\left\{\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|^{2}+\left\|\mathbf{y}_{t}-\mathbf{y}^{*}\right\|^{2}\right\}
+\end{aligned}
+$$
+
+This $\O\left(\kappa \log \frac{1}{\epsilon}\right)$ complexity is optimal for SC-SC setting.
+
+
+
+
+
+\subsection*{Optimistic GDA}
+$$
+\begin{aligned}
+&\mathbf{x}_{t+\frac{1}{2}}=\Pi_{\mathcal{X}}\left(\mathbf{x}_{t}-\eta \nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{t-\frac{1}{2}}, \mathbf{y}_{t-\frac{1}{2}}\right)\right) \\ &\mathbf{y}_{t+\frac{1}{2}}=\Pi_{\mathcal{Y}}\left(\mathbf{y}_{t}+\eta \nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{t-\frac{1}{2}}, \mathbf{y}_{t-\frac{1}{2}}\right)\right) \\
+&\mathbf{x}_{t+1}=\Pi_{\mathcal{X}}\left(\mathbf{x}_{t}-\eta \nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{t+\frac{1}{2}}, \mathbf{y}_{t+\frac{1}{2}}\right)\right) \\ &\mathbf{y}_{t+1}=\Pi_{\mathcal{Y}}\left(\mathbf{y}_{t}+\eta \nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{t+\frac{1}{2}}, \mathbf{y}_{t+\frac{1}{2}}\right)\right)
+\end{aligned}
+$$
+
+
+Equivalent formulation:
+$$
+\left\{\begin{array}{l}
+\x_{t+1}=\x_{t}-2 \eta \nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{t}, \mathbf{y}_{t}\right)+\eta \nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{t-1}, \mathbf{y}_{t-1}\right) \\
+\y_{t+1}=\y_{t}-2 \eta \nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{t}, \mathbf{y}_{t}\right)+\eta \nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{t-1}, \mathbf{y}_{t-1}\right)
+\end{array}\right.
+$$
+
+
+
+
+
+\subsection*{Proximal Point Algorithm (PPA)}
+$$
+\begin{aligned}
+&\left(\mathbf{x}_{t+1}, \mathbf{y}_{t+1}\right) \\
+\leftarrow& \underset{\mathbf{x} \in \mathcal{X}}{\operatorname{argmin}} \  \underset{\mathbf{y} \in \mathcal{Y}}  {\operatorname{argmax}}\left\{\phi(\mathbf{x}, \mathbf{y})+\frac{1}{2 \eta}\left\|\mathbf{x}-\mathbf{x}_{t}\right\|^{2}-\frac{1}{2 \eta}\left\|\mathbf{y}-\mathbf{y}_{t}\right\|^{2}\right\}
+\end{aligned}
+$$
+
+PPA has been shown to converge with $\mathcal{O}(1 / T)$ rate in convex-concave case.
+
+\subsubsection*{Implicit Update of PPA}
+$$
+\begin{aligned}
+&\mathbf{x}_{t+1}=\Pi_{\mathcal{X}}\left(\mathbf{x}_{t}-\eta \nabla_{\mathbf{x}} \phi\left(\mathbf{x}_{t+1}, \mathbf{y}_{t+1}\right)\right) \\
+&\mathbf{y}_{t+1}=\Pi_{\mathcal{Y}}\left(\mathbf{y}_{t}+\eta \nabla_{\mathbf{y}} \phi\left(\mathbf{x}_{t+1}, \mathbf{y}_{t+1}\right)\right)
+\end{aligned}
+$$
+
+
+
+
+\subsection*{Connections between PPA, EG and OGDA}
+Handout13 Page 33
+
+
+
+
+
+
+\pink{13.5 Concave Games, Variational Inequalities}
+\subsection*{Variational Inequality Problem (VI)}
+Let $\mathcal{Z} \subset \mathbb{R}^{d}$ be a nonempty subset and consider a mapping $F: \mathcal{Z} \rightarrow \mathbb{R}^{d}$.
+
+\green{VI Problem}: Find $\mathbf{z}^{*} \in \mathcal{Z}$ such that $\left\langle F\left(\mathbf{z}^{*}\right), \mathbf{z}-\mathbf{z}^{*}\right\rangle \geq 0$ for all $\mathbf{z} \in \mathcal{Z}$.
+
+
+\melon{Existence}: If $\mathcal{Z}$ is a nonempty convex compact subset of $\mathbb{R}^{d}$ and $F: \mathcal{Z} \rightarrow \mathbb{R}^{d}$ is continuous, then there exists a solution $z^{*}$ to $(\mathrm{VI})$.
+
+
+
+
+\subsection*{Variational Inequalities with Monotone Operators}
+The operator $F: \mathcal{Z} \rightarrow \mathbb{R}^{d}$ is:
+\begin{itemize}[leftmargin=*]
+    \item \green{monotone} if
+$$
+\langle F(\mathbf{u})-F(\mathbf{v}), \mathbf{u}-\mathbf{v}\rangle \geq 0 \quad \forall \mathbf{u}, \mathbf{v} \in \mathcal{Z}
+$$
+    \item \green{$\mu$-strongly-monotone} $(\mu>0)$ if
+$$
+\langle F(\mathbf{u})-F(\mathbf{v}), \mathbf{u}-\mathbf{v}\rangle \geq \mu\|\mathbf{u}-\mathbf{v}\|^{2} \quad \forall \mathbf{u}, \mathbf{v} \in \mathcal{Z}
+$$
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Weak Solution of VI}
+\begin{itemize}[leftmargin=*]
+    \item \green{(Strong) solution (of Stampacchia VI)}: find $\mathbf{z}^{*} \in \mathcal{Z}$ such that:
+$$
+\left\langle F\left(\mathbf{z}^{*}\right), \mathbf{z}-\mathbf{z}^{*}\right\rangle \geq 0 \forall \mathbf{z} \in \mathcal{Z} .
+$$
+    \item \green{Weak solution (of Minty VI)}: find $\mathbf{z}^{*} \in \mathcal{Z}$ such that:
+$$
+\left\langle F(\mathbf{z}), \mathbf{z}-\mathbf{z}^{*}\right\rangle \geq 0 \forall \mathbf{z} \in \mathcal{Z} .
+$$
+    \item If $F$ is monotone, then a strong solution is also a weak solution.
+    \item If $F$ is continuous, then a weak solution is also a strong solution.
+    \item We use $\epsilon_{\mathrm{VI}}(\hat{\mathbf{z}}):=\max _{\mathbf{u} \in \mathcal{Z}}\langle F(\mathbf{u}), \mathbf{u}-\hat{\mathbf{z}}\rangle$ to measure the inaccuracy of a solution $\hat{\mathbf{z}}$.
+\end{itemize}

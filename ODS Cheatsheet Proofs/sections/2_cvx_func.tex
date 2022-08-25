@@ -1,0 +1,47 @@
+\section*{2. Convex Functions}
+\subsection*{Lemma 2.20}
+Suppose there exists $\mathbf{y} \in \mathbf{d o m}(f)$ such that $f(\mathbf{y})<f\left(\mathbf{x}^{\star}\right)$.
+
+Define $\mathbf{y}^{\prime}:=\lambda \mathbf{x}^{\star}+(1-\lambda) \mathbf{y}$ for $\lambda \in(0,1)$
+
+From convexity, we get that that $f\left(\mathbf{y}^{\prime}\right)<f\left(\mathbf{x}^{\star}\right)$. Choosing $\lambda$ so close to 1 that $\left\|\mathbf{y}^{\prime}-\mathbf{x}^{\star}\right\|<\varepsilon$ yields a contradiction to $\mathbf{x}^{\star}$ being a local minimum.
+
+\subsection*{Lemma 2.21}
+Suppose that $\nabla f(\mathbf{x})=\mathbf{0}$. According to the first-order characterization of convexity, we have
+$$
+f(\mathbf{y}) \geq f(\mathbf{x})+\nabla f(\mathbf{x})^{\top}(\mathbf{y}-\mathbf{x})=f(\mathbf{x})
+$$
+for all $\mathbf{y} \in \operatorname{dom}(f)$, so $\mathbf{x}$ is a global minimum.
+
+\subsection*{Thm 2.29 (Weierstrass Theorem)}
+We know that $f$-as a continuous function-attains a minimum over the closed and bounded (= compact) set $f^{\leq \alpha}$ at some $\mathbf{x}^{\star}$. This $\mathbf{x}^{\star}$ is also a global minimum as it has value $f\left(\mathbf{x}^{\star}\right) \leq \alpha$, while any $\mathbf{x} \notin f^{\leq \alpha}$ has value $f(\mathbf{x})>\alpha \geq f\left(\mathbf{x}^{\star}\right)$.
+Generalizes to suitable domains $\operatorname{dom}(f) \neq \mathbb{R}^{d}$.
+
+\subsection*{Lemma 2.45}
+$$
+g(\boldsymbol{\lambda}, \boldsymbol{\nu}) \leq L(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu})=f_{0}(\mathbf{x})+\underbrace{\sum_{i=1}^{m} \lambda_{i} f_{i}(\mathbf{x})}_{\leq 0}+\underbrace{\sum_{i=1}^{p} \nu_{i} h_{i}(\mathbf{x})}_{=0} \leq f_{0}(\mathbf{x})
+$$
+
+\subsection*{Lemma 2.49 \& 2.50}
+\green{Master Equation}
+$$
+\begin{aligned}
+f_{0}(\tilde{\mathbf{x}}) &=g(\tilde{\boldsymbol{\lambda}}, \tilde{\boldsymbol{\nu}}) \\
+&=\inf _{\mathbf{x} \in \mathcal{D}}\left(f_{0}(\mathbf{x})+\sum_{i=1}^{m} \tilde{\lambda}_{i} f_{i}(\mathbf{x})+\sum_{i=1}^{p} \tilde{\nu}_{i} h_{i}(\mathbf{x})\right) \\
+& \leq f_{0}(\tilde{\mathbf{x}})+\sum_{i=1}^{m} \underbrace{\tilde{\lambda}_{i} f_{i}(\tilde{\mathbf{x}})}_{\leq 0}+\sum_{i=1}^{p} \underbrace{\tilde{\nu}_{i} h_{i}(\tilde{\mathbf{x}})}_{0} \\
+& \leq f_{0}(\tilde{\mathbf{x}}) .
+\end{aligned}
+$$
+All inequalities are equalities!
+
+Lemma 2.49 follows from
+$
+\tilde{\lambda}_{i} f_{i}(\tilde{\mathbf{x}})=0
+$
+in the Master Equation.
+
+By equality in the third line of the Master Equation, $\tilde{\mathbf{x}}$ minimizes the differentiable function
+$$
+f_{0}(\mathbf{x})+\sum_{i=1}^{m} \tilde{\lambda}_{i} f_{i}(\mathbf{x})+\sum_{i=1}^{p} \tilde{\nu}_{i} h_{i}(\mathbf{x})
+$$
+Hence its gradient vanishes by Lemma 2.22.

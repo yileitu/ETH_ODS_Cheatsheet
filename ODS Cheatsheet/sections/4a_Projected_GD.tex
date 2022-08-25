@@ -1,0 +1,73 @@
+\section*{4a. Projected Gradient Descent}
+\subsection*{Constrained Optimization Problem}
+$$
+\begin{aligned}
+\text { minimize } & f(\mathbf{x}) \\
+\text { subject to } & \mathbf{x} \in X, X \subsetneq \mathbb{R}^{d} \text { (closed convex set) }
+\end{aligned}
+$$
+
+\subsection*{Projected Gradient Descent}
+Choose $\mathbf{x}_{0} \in \mathbb{R}^{d}$.
+$$
+\begin{aligned}
+\mathbf{y}_{t+1} &:=\mathbf{x}_{t}-\gamma \nabla f\left(\mathbf{x}_{t}\right) \\
+\mathbf{x}_{t+1} &:=\Pi_{X}\left(\mathbf{y}_{t+1}\right):=\underset{\mathbf{x} \in X}{\operatorname{argmin}}\left\|\mathbf{x}-\mathbf{y}_{t+1}\right\|^{2}
+\end{aligned}
+$$
+
+for \green{times} $t=0,1, \ldots$, and \green{stepsize} $\gamma \geq 0$.
+
+
+\begin{itemize}[leftmargin=*]
+    \item When $\nabla f\left(\mathbf{x}_{t}\right) \neq \mathbf{0}$ but $\mathbf{x}_{t+1}=\mathbf{x}_{t}$ (convex $f$ and $\left.X\right)$, \red{we have reached an optimal solution}: the gradient is orthogonal to a hyperplane through $\mathbf{x}_{t}$ that has all feasible solutions on one side.
+    \item $f\left(\x_{t+1}\right) \leq f\left(\x_{t}\right)$ (\red{Proof see Hw4 Ex1})
+    \item $\left\|\mathbf{y}_{{t}+1}-\mathbf{x}_{{t}+1}\right\| \leq\left\|\mathbf{y}_{{t}+1}-\mathbf{x}_{{t}}\right\|=\gamma\left\|\nabla {f}\left(\mathbf{x}_{{t}}\right)\right\|$ (\red{Proof see Hw4 Ex1})
+\end{itemize}
+
+
+
+\subsection*{Optimality Condition for Projected Gradient Descent}
+Using projected gradient descent, $\mathbf{x}^{*}$ is an optimal solution to the constrained optimization problem \red{iff} $\mathbf{x}^{*}=$ $\Pi_{x}\left(\mathbf{x}^{*}-\gamma \nabla f\left(\mathbf{x}^{*}\right)\right)$
+
+(\red{Proof see ODS Exam FS20 Assignment 2})
+
+
+
+
+\subsection*{Fact 4a.1 Properties of Projection}
+Let $X \subseteq \mathbb{R}^{d}$ closed and convex, $\mathbf{x} \in X, \mathbf{y} \in \mathbb{R}^{d}$. Then
+\begin{enumerate}[label = (\roman*), leftmargin=*]
+    \item $\left(\mathbf{x}-\Pi_{X}(\mathbf{y})\right)^{\top}\left(\mathbf{y}-\Pi_{X}(\mathbf{y})\right) \leq 0$.
+    \item $\left\|\mathbf{x}-\Pi_{X}(\mathbf{y})\right\|^{2}+\left\|\mathbf{y}-\Pi_{X}(\mathbf{y})\right\|^{2} \leq\|\mathbf{x}-\mathbf{y}\|^{2}$.
+\end{enumerate}
+
+
+\subsection*{Num of Steps for PGD}
+The \red{same number of steps as GD} over $\mathbb{R}^{d}$!
+\begin{itemize}[leftmargin=*]
+    \item Lipschitz convex functions over $X: \mathcal{O}\left(1 / \varepsilon^{2}\right)$ steps
+    \item Smooth convex functions over $X: \mathcal{O}(1 / \varepsilon)$ steps
+    \item Smooth and strongly convex functions over $X: \mathcal{O}(\log (1 / \varepsilon))$ steps
+\end{itemize}
+
+
+\subsection*{Lemma 4a.3 Projected Sufficient Decrease}
+Let $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ be differentiable and smooth with parameter $L$ over a closed and convex set $X \subseteq \operatorname{dom}(f)$. Choosing stepsize $\gamma:=\frac{1}{L}$, projected gradient descent with arbitrary $\mathbf{x}_{0} \in X$ satisfies, for $t \geq 0$,
+$$
+f\left(\mathbf{x}_{t+1}\right) \leq f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2}+\frac{L}{2}\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t+1}\right\|^{2}
+$$
+
+
+
+\subsection*{Thm 4a.4 Smooth Convex Func over $X: \mathcal{O}(1 / \varepsilon)$ Steps}
+Let $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ be convex and differentiable. Let $X \subseteq \operatorname{dom}(f)$ be a closed convex set, and assume that there is a minimizer $\mathbf{x}^{\star}$ of $f$ over $X$; furthermore, suppose that $f$ is smooth over $X$ with parameter $L$. Choosing stepsize $\gamma:=\frac{1}{L}$, projected gradient descent yields
+$$
+f(\x_{t+1}) \leq f(\x_t)
+$$
+and
+$$
+f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq \frac{L}{2 T}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}, \quad T>0 .
+$$
+
+Exactly the \red{same bound} as in the unconstrained case!

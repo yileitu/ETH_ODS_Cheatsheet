@@ -1,0 +1,278 @@
+\section*{6. Stochastic Optimization}
+\subsection*{General Stochastic Optimization (SO) Problem}
+$$
+\min _{\mathbf{x} \in \mathbb{R}^{d}} F(\mathbf{x}):=\mathbb{E}_{\boldsymbol{\xi}}[f(\mathbf{x}, \boldsymbol{\xi})]
+$$
+\begin{itemize}[leftmargin=*]
+    \item $\boldsymbol{\xi}$ is a random vector with support $\Xi \subset \mathbb{R}^{m}$ and distribution $P$. 
+    \item For simplicity, assume $f(\mathbf{x}, \boldsymbol{\xi})$ is continuously differentiable for any $\boldsymbol{\xi} \in \Xi$. 
+\end{itemize}
+
+
+
+
+
+\subsection*{Finite Sum Problem}
+$$
+\min _{\mathbf{x} \in \mathbb{R}^{d}} F(\mathbf{x}):=\frac{1}{n} \sum_{i=1}^{n} f_{i}(\mathbf{x})
+$$
+
+$F(\mathbf{x})=\mathbb{E}_{\xi}\left[f_{\xi}(\mathbf{x})\right]$, where $\xi$ is uniformly distributed over $\{1,2, \ldots, n\}$.
+
+
+
+
+\subsection*{SO Pros \& Cons}
+Pros: (1) Faster, (2) Memory efficient, (3) Avoid overfitting, help generalization.
+
+Cons: (1) Lack of guarantee (2) Stuck at local solution, (3) Require strong assumptions 
+
+
+
+
+\subsection*{SGD for Finite Sum Problem}
+Sample $i_{t} \in[n]$ \red{uniformly} at random
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\gamma_{t} \nabla f_{i_{t}}\left(\mathbf{x}_{t}\right)
+$$
+
+\green{Unbiasedness}: $\mathbb{E}_{i_{t}}\left[\nabla f_{i_{t}}(\mathbf{x})\right]=\frac{1}{n} \sum_{i=1}^{n} \nabla f_{i}(\mathbf{x})=\nabla F(\mathbf{x})$
+
+Each iteration is $\mathcal{O}(n)$ cheaper than full GD.
+
+
+\subsubsection*{Vanilla Analysis of Finite Sum Problem}
+If $i$ is chosen at step $t$, then we have
+$$
+\begin{aligned}
+&\nabla {f}_{{i}}\left(\mathbf{x}_{{t}}\right)^{\top}\left(\mathbf{x}_{{t}}-\mathbf{x}^{*}\right) \\
+=&\frac{\gamma_{{t}}}{2}\left\|\nabla {f}_{{i}}\left(\mathbf{x}_{{t}}\right)\right\|_{2}^{2}+\frac{1}{2 \gamma_{{t}}}\left(\left\|\mathbf{x}_{{t}}-\mathbf{x}^{*}\right\|_{2}^{2}-\left\|\mathbf{x}_{{t}+1}-\mathbf{x}^{*}\right\|_{2}^{2}\right)
+\end{aligned}
+$$
+
+
+\subsection*{SGD for General Stochastic Optimization}
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\gamma_{t} \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right), \text { where } \boldsymbol{\xi}_{t} \stackrel{i i d}{\sim} P(\boldsymbol{\xi})
+$$
+
+
+\subsection*{Boundedness of Stochastic Gradients}
+Let $F(\x)=\mathbb{E}[f(\x, \vect{\xi})]$, where $f(\x, \vect{\xi})$ is convex and $L$-smooth for any realization of $\vect{\xi}$. Define $\x^{*}=\operatorname{argmin}_{{\x}} {F}(\mathbf{x})$. Then we have 
+$$
+\begin{aligned}
+&\mathbb{E}\left[\left\|\nabla f(\mathbf{x}, \xi)-\nabla f\left(\mathbf{x}^{*}, \xi\right)\right\|_{2}^{2}\right] \leq 2 {L}\left[{F}(\mathbf{x})-{F}\left(\mathbf{x}^{*}\right)\right] \\
+&\mathbb{E}\left[\|\nabla f(\x, \xi)\|_{2}^{2}\right] \leq 4 {L}\left[{F}(\mathbf{x})-{F}\left({\x}^{*}\right)\right]+2 \mathbb{E}\left[\left\|\nabla f\left({\x}^{*}, \xi\right)\right\|_{2}^{2}\right]
+\end{aligned}
+$$
+(\red{Proof see Hw6 Ex1\&2})
+
+
+
+\green{Unbiasedness}: $\mathbb{E}\left[\nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right) \mid \mathbf{x}_{t}\right]=\nabla F\left(\mathbf{x}_{t}\right)$ under mild regularity conditions
+
+We always assume stochastic gradient is \red{unbiased}.
+
+Note SGD is \red{not} a monotonic descent method.
+
+
+
+
+\subsection*{Stepsize (or Learning Rate)}
+\begin{itemize}[leftmargin=*]
+    \item If use fixed stepsize for SGD as in GD, SGD will not converge to the optimal solution (almost surely).
+    \item Stepsize should decrease to $0, \gamma_{t} \rightarrow 0$
+    \item For example, use polynomial rate $\gamma_{t}=\bigO \left(t^{-a}\right)$ with some $a>0$
+    \item In practice, use the form $\gamma_{t}=\frac{\gamma_{0}}{1+\beta t}$ and tune hyperparameters $\gamma_{0}, \beta$
+    \item In deep learning, often adopt \green{step decay} - drop the learning rate by a factor every few epochs.
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Simple Improvements of SGD}
+\subsubsection*{Mini-batch SGD}
+Use $b$ random samples to construct gradient estimator
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\gamma_{t} \cdot \frac{1}{b} \sum_{j \in J,|J|=b} \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{j}\right)
+$$
+\subsubsection*{SGD with iterate averaging}
+$$
+\overline{\mathbf{x}}_{t}=\frac{1}{t} \sum_{\tau=1}^{t} \mathbf{x}_{\tau}
+$$
+
+Averaging and mini-batch sampling can help reduce the variance. 
+
+Still, SGD can be \red{very sensitive to the choice of stepsize}.
+
+
+
+
+
+
+\subsection*{Limitations of SGD}
+\begin{itemize}[leftmargin=*]
+    \item learning rate tuning
+    \item uniform learning rate for all coordinates
+\end{itemize}
+
+
+
+
+
+
+
+\subsection*{Convergence for Stochastic Convex Problems}
+\subsubsection*{Thm 6.1 (Convex, weighted averaging)}
+Suppose $F(\mathbf{x})$ is \red{convex} and $\mathbb{E}\left[\|\nabla f(\mathbf{x}, \xi)\|_{2}^{2}\right] \leq B^{2}, \forall \mathbf{x}$. Then SGD satisfies that
+$$
+\mathbb{E}\left[F\left(\hat{\mathbf{x}}_{T}\right)-F\left(\mathbf{x}^{*}\right)\right] \leq \frac{R^{2}+B^{2} \sum_{t=1}^{T} \gamma_{t}^{2}}{2 \sum_{t=1}^{T} \gamma_{t}}
+$$
+where $\hat{\mathbf{x}}_{T}:=\sum_{t=1}^{T} \gamma_{t} \mathbf{x}_{t} / \sum_{t=1}^{T} \gamma_{t}$ and $\left\|\mathbf{x}_{1}-\mathbf{x}^{*}\right\|_{2} \leq R$.
+
+\begin{itemize}[leftmargin=*]
+    \item If $\gamma_{t} \equiv \frac{R}{B \sqrt{T}}, \mathbb{E}\left[F\left(\hat{\mathbf{x}}_{T}\right)-F\left(\mathbf{x}^{*}\right)\right]=\bigO \left(\frac{B R}{\sqrt{T}}\right)$.
+    \item This further implies the $\bigO\left(1 / \epsilon^{2}\right)$ sample complexity required by SGD.
+\end{itemize}
+
+\subsubsection*{Thm 6.2 (Strong convex, diminishing stepsize, last iterate)}
+Assume $F(\mathbf{x})$ is \red{$\mu$-strongly convex} and $\mathbb{E}\left[\|\nabla f(\mathbf{x}, \xi)\|_{2}^{2}\right] \leq B^{2}, \forall \mathbf{x}$, then SGD with $\gamma_{t}=\frac{\gamma}{t}\left(\gamma>\frac{1}{2 \mu}\right)$ satisfies
+$$
+\mathbb{E}\left[\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}\right] \leq \frac{C(\gamma)}{t} \\
+$$
+
+where $C(\gamma)=\max \left\{\frac{\gamma^{2} B^{2}}{2 \mu \gamma-1},\left\|\mathbf{x}_{1}-\mathbf{x}^{*}\right\|_{2}^{2}\right\}$
+
+\begin{itemize}[leftmargin=*]
+    \item If $F$ is also $L$-smooth, this further implies that $\mathbb{E}\left[F\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{*}\right)\right]=\bigO\left(\frac{L \cdot C(\gamma)}{t}\right)$.
+    \item The sample complexity required by SGD is $\bigO(1 / \epsilon)$ in this case.
+\end{itemize}
+
+
+
+
+
+\subsection*{SGD under Constant Stepsize (Thm 5.3)}
+Assume that (1) $F(\mathbf{x}):=\mathbb{E}[f(\mathbf{x}, \boldsymbol{\xi})]$ is $\mu$-strongly convex and $L$-smooth; (2) The unbiased estimator satisfies that for all $\mathbf{x}$ :
+$$
+\mathbb{E}\left[\|\nabla f(\mathbf{x}, \boldsymbol{\xi})\|_{2}^{2}\right] \leq \sigma^{2}+c\|\nabla F(\mathbf{x})\|_{2}^{2}
+$$
+
+Under the above assumption, SGD with $\gamma_{t}=\gamma \leq \frac{1}{L c}$ achieves:
+$$
+\mathbb{E}\left[F\left(\mathbf{x}_{t}\right)-F\left(\mathbf{x}^{*}\right)\right] \leq \frac{\gamma L \sigma^{2}}{2 \mu}+(1-\mu \gamma)^{t-1}\left(F\left(\mathbf{x}_{1}\right)-F\left(\mathbf{x}^{*}\right)\right)
+$$
+\begin{itemize}[leftmargin=*]
+    \item With constant stepsize, SGD converges \red{linearly to a neighborhood} around $\mathbf{x}^{*}$.
+    \item \green{Accuracy-convergence trade-off}: Smaller stepsize $\gamma$ implies better solution but slower rate.
+
+    \item \green{Strong Growth Condition}: when $\sigma^{2}=0$, i.e., $\mathbb{E}\left[\|\nabla f(\mathbf{x}, \boldsymbol{\xi})\|_{2}^{2}\right] \leq c\|\nabla F(\mathbf{x})\|_{2}^{2}$, SGD with constant stepsize \red{converges to the global optimum at a linear rate}.
+    \begin{itemize}[leftmargin=*]
+        \item Consider $F(\mathbf{x})=\frac{1}{n} \sum_{i=1}^{n} f_{i}(\mathbf{x})$, strong growth condition implies interpolation: at optimal solution $\mathbf{x}^{*}, \nabla f_{i}\left(\mathbf{x}^{*}\right)=0, \forall i$.
+        \item Strong growth condition holds when $F$ is smooth and satisfies PL inequality.
+        \item Examples: linear regression or overparametrized neural network in the realizable case.
+    \end{itemize}
+\end{itemize}
+
+
+
+
+
+
+
+\subsection*{SGD Summary}
+$$
+\begin{array}{c|c|c}
+\hline \hline & \text {Cvx} & \text {Strongly Cvx} \\
+\hline \text {Convergence rate} & O\left(\frac{1}{\sqrt{t}}\right) & O\left(\frac{1}{t}\right) \\
+\hline \text {Sample complexity} & O\left(\frac{1}{\epsilon^{2}}\right) & O\left(\frac{1}{\epsilon}\right) \\
+\hline \hline
+\end{array}
+$$
+
+
+
+
+
+\subsection*{Lower Complexity Bound for Stochastic Optimization}
+In the worst case, the sample complexity $\bigO\left(1 / \epsilon^{2}\right)$ and $\bigO(1 / \epsilon)$ for convex and strongly convex Lipschitz problems \red{cannot be improved}, for algorithms using only stochastic oracles.
+
+\green{Stochastic Oracle}: given input $\mathbf{x}$, stochastic oracle returns $G(\mathbf{x}, \boldsymbol{\xi})$ such that
+$$
+\mathbb{E}[G(\mathbf{x}, \boldsymbol{\xi})] \in \partial f(\mathbf{x}) \text { and } \mathbb{E}\left[\|G(\mathbf{x}, \boldsymbol{\xi})\|_{p}^{2}\right] \leq M^{2}
+$$
+
+for some positive constant $M$ and some $p \in[1, \infty]$.
+
+SGD is \red{optimal} for such problem classes.
+
+
+
+
+
+\subsection*{Popular Variants of SGD}
+\subsubsection*{Momentum SGD}
+$$
+\left\{\begin{array}{l}
+\mathbf{m}_{t}=\alpha \mathbf{m}_{t-1}+(1-\alpha) \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right) \\
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\gamma_{t} \mathbf{m}_{t}
+\end{array}\right.
+$$
+\subsubsection*{AdaGrad}
+$$
+\begin{cases}\mathbf{v}_{t} & =\mathbf{v}_{t-1}+\nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)^{\odot 2} \\ \mathbf{x}_{t+1} & =\mathbf{x}_{t}-\frac{\gamma_{0}}{\epsilon+\sqrt{\mathbf{v}_{t}}} \odot \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)\end{cases}
+$$
+\subsubsection*{RMSProp}
+$$
+\begin{cases}\mathbf{v}_{t} & =\beta \mathbf{v}_{t-1}+(1-\beta) \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)^{\odot 2} \\ \mathbf{x}_{t+1} & =\mathbf{x}_{t}-\frac{\gamma_{0}}{\varepsilon+\sqrt{\mathbf{v}_{t}}} \odot \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)\end{cases}
+$$
+
+
+
+\subsection*{ADAM}
+ADAM $\approx$ RMSProp + Momentum
+$$
+\begin{cases}\mathbf{v}_{t} & =\beta \mathbf{v}_{t-1}+(1-\beta) \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)^{\odot 2} \\ \mathbf{m}_{t} & =\alpha \mathbf{m}_{t-1}+(1-\alpha) \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right) \\ \mathbf{x}_{t+1} & =\mathbf{x}_{t}-\frac{\gamma_{0}}{\varepsilon+\sqrt{\tilde{\mathbf{v}}_{t}}} \odot \tilde{\mathbf{m}}_{t}\end{cases}
+$$
+\begin{itemize}[leftmargin=*]
+    \item Exponential decay of previous information $\mathbf{m}_{t}, \mathbf{v}_{t}$.
+    \item Note $\tilde{\mathbf{v}}_{t}=\frac{\mathbf{v}_{t}}{1-\beta^{t}}$ and $\tilde{\mathbf{m}}_{t}=\frac{\mathbf{m}_{t}}{1-\alpha^{t}}$ are bias-corrected estimates.
+    \item In practice, $\alpha$ and $\beta$ are chosen to be close to 1 .
+\end{itemize}
+
+
+
+
+
+\subsection*{Generic Adaptive Scheme}
+$$
+\begin{aligned}
+&\mathbf{g}_{t}=\nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right) \\
+&\mathbf{m}_{t}=\phi_{t}\left(\mathbf{g}_{1}, \ldots, \mathbf{g}_{t}\right) \\
+&\vect{V}_{t}=\psi_{t}\left(\mathbf{g}_{1}, \ldots, \mathbf{g}_{t}\right) \\
+&\hat{\mathbf{x}}_{t}=\mathbf{x}_{t}-\alpha_{t} \vect{V}_{t}^{-1 / 2} \mathbf{m}_{t} \\
+&\mathbf{x}_{t+1}=\underset{\mathbf{x} \in X}{\operatorname{argmin}}\left\{\left(\mathbf{x}-\hat{\mathbf{x}}_{t}\right)^{T} \vect{V}_{t}^{1 / 2}\left(\mathbf{x}-\hat{\mathbf{x}}_{t}\right)\right\}
+\end{aligned}
+$$
+\begin{itemize}[leftmargin=*]
+    \item SGD:
+$
+\phi_{t}\left(\mathbf{g}_{1}, \ldots, \mathbf{g}_{t}\right)=\mathbf{g}_{t}, \quad \psi_{t}\left(\mathbf{g}_{1}, \ldots, \mathbf{g}_{t}\right)=\vect{I}
+$
+    \item AdaGrad:
+$
+\phi_{t}\left(\mathbf{g}_{1}, \ldots, \mathbf{g}_{t}\right)=\mathbf{g}_{t}, \quad \psi_{t}\left(\mathbf{g}_{1}, \ldots, \mathbf{g}_{t}\right)=\frac{\operatorname{diag}\left(\sum_{\tau=1}^{t} \mathbf{g}_{\tau}^{2}\right)}{t}
+$
+    \item Adam:
+$
+\phi_{t}\left(\mathbf{g}_{1}, \ldots, \mathbf{g}_{t}\right)=\left(1-\beta_{1}\right) \sum_{\tau=1}^{t} \beta_{1}^{t-\tau} \mathbf{g}_{\tau}
+$, $\psi_{t}\left(\mathbf{g}_{1}, \ldots, \mathbf{g}_{t}\right)=\left(1-\beta_{2}\right) \operatorname{diag}\left(\sum_{\tau=1}^{t} \beta_{2}^{t-\tau} \mathbf{g}_{\tau}^{2}\right)$. In other words, $\mathbf{m}_{t}=\beta_{1} \mathbf{m}_{t-1}+\left(1-\beta_{1}\right) \mathbf{g}_{t}, \vect{V}_{t}=\beta_{2} \vect{V}_{t-1}+\left(1-\beta_{2}\right) \operatorname{diag}\left(\mathbf{g}_{t}^{2}\right)$.
+\end{itemize}
+
+
+
+
+
+

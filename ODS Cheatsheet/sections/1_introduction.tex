@@ -1,0 +1,221 @@
+\section*{1. Introduction}
+\subsection*{Miscellaneous}
+\begin{itemize}[leftmargin=*]
+    \item $\forall x \in \mathbb{R}, 1+x \leq e^{x}$
+    \item \green{Cosine Thm}: $2 \mathbf{v}^{\top} \mathbf{w}=\|\mathbf{v}\|^{2}+\|\mathbf{w}\|^{2}-\|\mathbf{v}-\mathbf{w}\|^{2}$
+    \item For a random vector $\X$, $\operatorname{Var}(\X) := \E \bigl[ \|  \X - \E(\X) \|^2\bigr] = \E\bigl[\| \X\|^2\bigr] - \|\E[\X]\|^2$
+    $\Rightarrow \E \bigl[ \|  \X - \E(\X) \|^2\bigr] \leq \E\bigl[\| \X\|^2\bigr] $
+    \item $\sum_{t=1}^{T} 1/ \sqrt{t}= \O(\sqrt{T})$
+    \item $\sum_{t=1}^{T} 1/t= \O(\ln T)$
+\end{itemize}
+
+\subsection*{Eigendecomposition}
+\begin{itemize}[leftmargin=*]
+    \item Square $n \times n$ matrix $\vect{A}$. 
+$\mathbf{A} \mathbf{v}=\lambda \mathbf{v}$
+    \item Equation for eigenvalues:
+$p(\lambda)=\operatorname{det}(\mathbf{A}-\lambda \mathbf{I})=0$
+    \item $\vect{A}$ can be factorized as $\mathbf{A}=\mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^{-1}$
+    \item If none of eigenvalues are zero, then $\mathbf{A}$ is \green{invertible} and its inverse is given by $\mathbf{A}^{-1}=\mathbf{Q} \mathbf{\Lambda}^{-1} \mathbf{Q}^{-1}$
+    \item $\mathbf{A}^{n}=\mathbf{Q} \mathbf{\Lambda}^{n} \mathbf{Q}^{-1}$, $\mathbf{A}^{-1}=\mathbf{Q} \mathbf{\Lambda}^{-1} \mathbf{Q}^{-1}$
+\end{itemize}
+
+\subsubsection*{Eigendecomposition of Symmetric Matrices}
+\begin{itemize}[leftmargin=*]
+    \item For every $n \times n$ real symmetric matrix, ${\displaystyle \mathbf {A} =\mathbf {V} \mathbf {\Lambda } \mathbf {V} ^{\mathsf {T}}}$, $\vect{VV}^\top = \vect{V}^\top\vect{V} = \vect{I}_n$, $\vect{V}^\top = \vect{V}^{-1}$
+    \item Can be written as $\vect{A}=\sum_{i=1}^{n} \lambda_{i} \mathbf{v}_{i},  \mathbf{v}_{i}^{\top}$, $\left\{\mathbf{v}_{i}\right\}_{i=1}^{n}$ is a basis of $\mathbb{R}^n$.
+    \item Any vector $x \in \mathbb{R}^{n}$ can be written as $\mathbf{x}=\sum_{i=1}^{n} \alpha_{i} \mathbf{v}_{i}$ for a unique set of $\left\{\alpha_{i}\right\}_{i=1}^{n}$. Then $\vect{Ax}=\sum_{i=1}^{n} \lambda_{i} \alpha_{i} v_{i}$, $\vect{x}^{\top} \vect{Ax}=\sum_{i=1}^{n} \alpha_{i}^{2} \lambda_{i}$
+    \item $\displaystyle\max _{\| \vect{x} \|=1} \vect{x}^{\top} \vect{ A x}=\displaystyle\max _{i=1, \dots,  n}\left\{\lambda_{i}\right\}$, $\displaystyle\min _{\| \vect{x} \|=1} \vect{x}^{\top} \vect{A x}=\displaystyle\min _{i=1, \dots, n }\left\{\lambda_{i}\right\}$
+    \item $\vect{A}^{k}=\sum_{i=1}^{n} \lambda_{i}^{k} \mathbf{v}_{i} \mathbf{v}_{i}^{\top}$, $\vect{A}^{-1}=\sum_{i=1}^{n} \lambda_{i}^{-1} \vect{v}_{i} \mathbf{v}_{i}^{\top}$
+\end{itemize}
+
+
+\subsection*{Matrix Norm}
+\subsubsection*{Spectral Norm}
+The spectral norm of a matrix $\vect{A}$ is the largest singular value of $\vect{A}$ (i.e., the square root of the largest eigenvalue of the matrix $\vect{A}^{*} \A$, where $\vect{A}^{*}$ denotes the conjugate transpose $\vect{A}$ ):
+$$
+\|\vect{A}\|_{2}=\sqrt{\lambda_{\max }\left(\vect{A}^{*} \vect{A}\right)}=\sigma_{\max }(\vect{A})
+$$
+
+
+For the square matrix,
+$$\|\vect{A} \|_2:=\max _{\mathbf{v} \in \mathbb{R}^{d}, \mathbf{v} \neq 0} \frac{\|\vect{A} \mathbf{v}\|}{\|\mathbf{v}\|}=\max _{\|\mathbf{v}\|=1}\|\vect{A}  \mathbf{v}\| = \lambda_{\max} (\vect{A})$$
+
+
+\subsubsection*{Frobenius Norm}
+$$\displaystyle\|\vect{A}\|_{\mathrm{F}}=\sqrt{\sum_{i, j=1}^{n}\left|a_{i j}\right|^{2}}=\sqrt{\operatorname{tr}\left(\vect{A}^{\top} \vect{A}\right)}=\sqrt{\sum_{i=1}^{\min \{m, n\}} \sigma_{i}^{2}(\vect{A})}$$
+
+
+\subsubsection*{Inequalities}
+\begin{itemize}[leftmargin=*]
+    \item $\|\A\|_2 \leq\|\A\|_{F}$ for every matrix (Proof see Hw8 Ex3).
+    \item $\|\A \mathbf{y}\|_2 \leq\|\A\|_2 \cdot\|\mathbf{y}\|_2$ for any $\A, \mathbf{y}$
+    \item $\|\A \x\|_2^2 \leq \lambda_{\max}(\A) \cdot \x^\top \A \x = \| \A \|_2 \cdot \x^\top \A \x $
+    \item $\| \A \x \|_2^2 \geq \lambda_{\min}^2(\A) \cdot \| \x\|_2^2$
+    \item $\lambda_{\min}(\A) \cdot \|\x \|_2^2 \leq \x^\top\A \x \leq \lambda_{\max}(\A) \cdot \|\x \|_2^2 = \|\A \| \|\x \|_2^2$
+    \item If $\lambda_{\min}(\A) \geq \mu$ and/or $\lambda_{\max}(\A) \leq L$, then $\lambda_{\max}(\A^{-1}) \leq \frac{1}{\mu}$ and/or $\lambda_{\min}(\A^{-1}) \leq \frac{1}{L}$
+    \item $
+\sigma_{i+j-1}(\vect{A}+\vect{B}) \leqslant \sigma_{i}(\vect{A})+\sigma_{j}(\vect{B}) \quad  \text{for } i, j \in \mathbb{N}, i+j-1 \leq \min \{m, n\}
+$
+    \item $\|\A \B \|_F \geq \sigma_{\min}(\B) \cdot \| \A\|_F$
+\end{itemize}
+
+
+
+
+
+
+\subsection*{General Norms and Dual Norms}
+\subsubsection*{Norm}
+A function $\|\cdot\|: \mathbb{R}^{d} \rightarrow \mathbb{R}_{+}$is a \green{norm} if
+(a) $\|\mathbf{x}\|=0$ if and only if $\mathbf{x}=0$;
+
+(b) $\|\alpha \mathbf{x}\|=|\alpha| \cdot\|\mathbf{x}\|$;
+
+(c) $\|\mathbf{x}+\mathbf{y}\| \leq\|\mathbf{x}\|+\|\mathbf{y}\|$.
+
+\subsubsection*{Dual Norm}
+$$\|\mathbf{y}\|_{*}:=\max _{\|\mathbf{x}\| \leq 1}\langle\mathbf{x}, \mathbf{y}\rangle$$
+
+
+For $p \geq 1$ and $1 / p+1 / q=1$,
+$$\|\mathbf{x}\|_{p}:=\left(\sum_{i=1}^{d}\left|x_{i}\right|^{p}\right)^{1 / p},\|\cdot\|_{p, *}=\|\cdot\|_{q}$$
+
+
+\navy{Inequality}: $\frac{1}{\sqrt{d}}\|\mathbf{x}\|_{2} \leq\|\mathbf{x}\|_{\infty} \leq\|\mathbf{x}\|_{2} \leq\|\mathbf{x}\|_{1} \leq \sqrt{d}\|\mathbf{x}\|_{2}$
+
+
+
+
+
+
+
+
+\subsection*{General Smoothness and Strong Convexity}
+\begin{itemize}[leftmargin=*]
+    \item \green{Convexity}: 
+    $$f(\mathbf{y}) \geq f(\mathbf{x})+\nabla f(\mathbf{x})^{\top}(\mathbf{y}-\mathbf{x})
+    $$
+    
+    \item \green{Optimality Condition for Convex Functions}: Suppose that $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ is convex and differentiable over an open domain $\operatorname{dom}(f) \subseteq \mathbb{R}^{d}$, and let $X \subseteq \operatorname{dom}(f)$ be a convex set. Point $\mathbf{x}^{\star} \in X$ is a minimizer of $f$ over $X$ \red{iff}
+$$
+\nabla f\left(\mathbf{x}^{\star}\right)^{\top}\left(\mathbf{x}-\mathbf{x}^{\star}\right) \geq 0 \quad \forall \mathbf{x} \in X
+$$
+
+    \item \green{Lipschitz continuity}: 
+
+$f(\mathbf{x})$ is $B$-Lipschitz continuous on $X$ if
+$$
+\begin{aligned}
+    &\|f(\mathbf{x})-f(\mathbf{y})| \leq B\|\mathbf{x}-\mathbf{y}\|_\bullet , \forall \mathbf{x}, \mathbf{y} \in X \\
+    \iff \quad & \|\mathbf{g}\|_{*} \leq B \text{ for all } \mathbf{g} \in \partial f(\mathbf{x})
+\end{aligned}
+$$
+
+    In particular, $\|f(\mathbf{x})-f(\mathbf{y})\|_2 \leq B\|\mathbf{x}-\mathbf{y}\|_2 \iff  \|\mathbf{g}\|_{2} \leq B$
+    \item \green{Smoothness}: 
+        \begin{itemize}[leftmargin=*]
+        \item $f(\mathbf{x})$ is $L$-smooth on $X$ if $f(\mathbf{x})$ is differentiable and
+$$
+f(\mathbf{x}) \leq f(\mathbf{y})+\nabla f(\mathbf{y})^{\top}(\mathbf{x}-\mathbf{y})+\frac{L}{2}\|\mathbf{x}-\mathbf{y}\|^{2}, \forall \mathbf{x}, \mathbf{y} \in X
+$$
+        \item $f(\mathbf{x})$ is $L$-smooth \red{iff} $\nabla f(\x)$ is $L$-Lipschitz, i.e.,:
+    $$
+\|\nabla f(\x)-\nabla f(\y)\| \leq L\|\x-\y\|, \forall \x, \y
+$$
+        \item If $f$ is $L$-smooth then
+$$
+f\left(\x-\frac{1}{L} \nabla f(\x)\right)-f(\x) \leq-\frac{1}{2 L}\|\nabla f(\x)\|_{2}^{2},
+$$
+and
+$$
+f(\x) - f\left(\x^{*}\right) \geq \frac{1}{2 L}\|\nabla f(\x)\|_{2}^{2},
+$$
+    (\red{Proof see Hw6 Ex1})
+    
+        \item \red{In all inequalities above, $\y$ is often set as $\x - \frac{1}{L} \nabla f(\x)$}.
+    \end{itemize}
+
+    \item \green{Strong convexity}: 
+    \begin{itemize}[leftmargin=*]
+        \item $f(\mathbf{x})$ is $\mu$-strongly convex on $X$ if 
+$$
+f(\mathbf{x}) \geq f(\mathbf{y})+\nabla{f(\y)}^{\top}(\mathbf{x}-\mathbf{y})+\frac{\mu}{2}\|\mathbf{x}-\mathbf{y}\|^{2}, \forall \mathbf{x}, \mathbf{y} \in X
+$$
+        \item If $f$ is $\mu$–strongly convex, then it also satisfies the PL inequality,
+        $$\|\nabla f(\x)\|_{2}^{2} \geq 2 \mu\left[f(\x)-f\left(\x^{*}\right)\right]$$
+    \end{itemize}
+    
+    
+        \item \green{Smooth and Convex}: If $f(\x)$ is convex and $L$-smooth then
+$$
+\begin{aligned}
+&f(\y)-f(\x)  \leq \nabla f(\y)^\top \left( \y-\x \right)-\frac{1}{2 L}\|\nabla f(\y)-\nabla f(\x)\|_{2}^{2} \\
+& \left[\nabla f(\y)-\nabla f(\x)\right]^\top \left(\y-\x\right)  \geq \frac{1}{L}\|\nabla f(\x)-\nabla f(\y)\|
+\end{aligned}
+$$
+
+    
+\end{itemize}
+
+
+
+
+
+
+
+
+\subsection*{Rate of Convergence}
+Consider the sequence $\left\{\delta_{t}\right\}_{t} \geq 0$ such that $\delta_{0} \geq 0$ and
+$$
+\delta_{t}-\delta_{t+1} \geq C \cdot \delta_{t}^{\alpha}, \quad \forall t \geq 0
+$$
+for some $C>0$ and $\alpha>0$.
+
+For any $\alpha>1$, we have
+$$
+\delta_{t}=\O\left(\frac{1}{t^{1 /(\alpha-1)}}\right)
+$$
+
+For optimization problems, if we have
+$$
+f\left(\x_{t}\right)-f\left(\x_{t+1}\right) \geq C \cdot\left(f\left(\x_{t}\right)-f^{*}\right)^{\alpha}, \quad \forall t \geq 0
+$$
+Then it implies that
+\begin{itemize}[leftmargin=*]
+    \item If $\alpha=1$ and $0<C<1$, then     
+$\left\{\mathbf{x}_{{t}}\right\}_{{t}} \geq 0$ achieves a linear rate.
+    \item If $\alpha>1$, then $\left\{\x_{t}\right\}_{t}>0$ achieves a sublinear rate.
+    \item If $\alpha<1$, then $\left\{\x_{t}\right\}_{t} \geq 0$ achieves a superlinear rate.
+\end{itemize}
+
+
+
+
+
+\subsection*{Trick: Construction Related to Convex $L$-smooth Function}
+For a convex and $L$-smooth function $f(x)$, $\x^*$ is the global minimizer. Construct the function
+$$
+g(\x) = f(\x) - f(\x^*) - \nabla f(\x^*)^\top(\x - \x^*)
+$$
+
+Then $g(\x)$ has a lot of properties:
+\begin{itemize}[leftmargin=*]
+    \item $g(\x) \geq 0$ and the equality is achieved when $\x = \x^*$.
+    \item $g(\x)$ is still $L$-smooth and convex.
+    \item $\nabla g(\x) = \nabla f(\x) - \nabla f(\x^*)$. Thus, $\nabla g(\x^*) = 0$ is the minimizer of $g(\x)$
+\end{itemize}
+
+
+\subsection*{Trick: Fundamental Theorem of Calculus}
+\melon{Goal}: For a differentiable function $f: \mathbb{R}^d \rightarrow \mathbb{R}$, analyze $f(\y) - f(\x)$ for all $\x, \y \in \mathbb{R}^d$. 
+
+\melon{Trick}: Consider function $g(t):=f(\x+t(\y-\x))$. $\nabla g(t)=(\y-\x)^{\top} \nabla f(\x+t(\y-\x))$.
+
+We can apply the fundamental theorem of calculus (theorem 2.4) twice for $\Delta:=g(1)-g(0)$.
+$$
+\Delta =f(\y)-f(\x) =\int_{0}^{1} \nabla g(t) d t
+$$
+
+If $f$ is twice-differentiable, then $\nabla^{2} g(t)=(\y-\x)^{\top} \nabla^{2} f(\x+t(\y-\x))(\y-\x)$.
+$$\begin{aligned} \Delta &=f(\y)-f(\x) =\int_{0}^{1} \nabla g(t) d t \\ &=\int_{0}^{1}\left(\int_{0}^{t} \nabla^{2} g(z) d z+\nabla g(0)\right) d t \end{aligned}$$

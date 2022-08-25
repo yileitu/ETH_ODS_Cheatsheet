@@ -1,0 +1,30 @@
+\section*{6. Stochastic Optimization}
+\subsection*{Thm 6.1 Convex, weighted averaging}
+First, $\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|_{2}^{2}=\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}-2 \gamma_{t} \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)^{T}\left(\mathbf{x}_{t}-\mathbf{x}^{*}\right)+\gamma_{t}^{2}\left\|\nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)\right\|_{2}^{2}$. By law of total expectation,
+$$
+\begin{aligned}
+\mathbb{E}\left[\nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)^{T}\left(\mathbf{x}_{t}-\mathbf{x}^{*}\right)\right] &=\mathbb{E}\left[\mathbb{E}\left[\nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)^{T}\left(\mathbf{x}_{t}-\mathbf{x}^{*}\right) \mid \mathbf{x}_{t}\right]\right] \\
+&=\mathbb{E}\left[\mathbb{E}\left[\nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right) \mid \mathbf{x}_{t}\right]^{T}\left(\mathbf{x}_{t}-\mathbf{x}^{*}\right)\right] \\
+&=\mathbb{E}\left[\nabla F\left(\mathbf{x}_{t}\right)^{T}\left(\mathbf{x}_{t}-\mathbf{x}^{*}\right)\right] \\
+& \geq \mathbb{E}\left[F\left(\mathbf{x}_{t}\right)-F\left(\mathbf{x}^{*}\right)\right]
+\end{aligned}
+$$
+This leads to the recursion:
+$$
+\gamma_{t} \mathbb{E}\left[F\left(\mathbf{x}_{t}\right)-F\left(\mathbf{x}^{*}\right)\right] \leq \frac{1}{2} \mathbb{E}\left[\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}\right]-\frac{1}{2} \mathbb{E}\left[\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|_{2}^{2}\right]+\frac{1}{2} \gamma_{t}^{2} B^{2}
+$$
+The result follows by telescoping the sum from $t=1$ to $T$.
+
+
+
+\subsection*{Thm 6.2 Strong convex, diminishing stepsize, last iterate}
+First, $\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|_{2}^{2}=\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}-2 \gamma_{t} \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)^{T}\left(\mathbf{x}_{t}-\mathbf{x}^{*}\right)+\gamma_{t}^{2}\left\|\nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)\right\|_{2}^{2}$.
+By law of total expectation and strong convexity,
+$$
+\mathbb{E}\left[\nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right)^{T}\left(\mathbf{x}_{t}-\mathbf{x}^{*}\right)\right]=\mathbb{E}\left[\nabla F\left(\mathbf{x}_{t}\right)^{T}\left(\mathbf{x}_{t}-\mathbf{x}^{*}\right)\right] \geq \mu \mathbb{E}\left[\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}\right]
+$$
+This leads to the recursion:
+$$
+\mathbb{E}\left[\left\|\mathbf{x}_{t+1}-\mathbf{x}^{*}\right\|_{2}^{2}\right] \leq\left(1-\frac{2 \mu \gamma}{t}\right) \mathbb{E}\left[\left\|\mathbf{x}_{t}-\mathbf{x}^{*}\right\|_{2}^{2}\right]+\frac{\gamma^{2} B^{2}}{t^{2}}
+$$
+The result follows by induction.

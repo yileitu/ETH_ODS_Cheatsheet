@@ -1,0 +1,200 @@
+\section*{11. Modern Second-Order Methods and Nonconvex Optimization}
+\pink{Part A: Modern Second-order Methods}
+
+
+\subsection*{Global analysis for strongly-convex smooth objectives}
+\begin{itemize}[leftmargin=*]
+    \item Assume $f(\mathbf{x})$ is $\mu$-strongly convex and has $L$-Lipschitz continuous gradient.
+    \item Consider Newton method $\mathbf{x}_{t+1}:=\mathbf{x}_{t}-\gamma \nabla^{2} f\left(\mathbf{x}_{t}\right)^{-1} \nabla f\left(\mathbf{x}_{t}\right)$.
+    \item We can show that Newton method enjoys a globally linear convergence with properly chosen stepsize $\gamma>0$ :
+$$
+f\left(\mathbf{x}_{t}\right)-f^{*} \leq\left(1-\frac{\mu^{2}}{L^{2}}\right)^{t}\left(f\left(\mathbf{x}_{0}\right)-f^{*}\right)
+$$
+    \item Note that this is \red{worse than GD}, where
+$$
+f\left(\mathbf{x}_{t}\right)-f^{*} \leq\left(1-\frac{\mu}{L}\right)^{t}\left(f\left(\mathbf{x}_{0}\right)-f^{*}\right)
+$$
+\end{itemize}
+
+
+
+
+
+
+
+\subsection*{Overcoming the local nature of Newton method}
+\begin{itemize}[leftmargin=*]
+    \item \green{Newton method with line-search}: select $\gamma_{t}$ such that $f\left(\mathbf{x}_{t+1}\right)<f\left(\mathbf{x}_{t}\right)$ with sufficient decrease.
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\gamma_{t} \nabla^{2} f\left(\mathbf{x}_{t}\right)^{-1} \nabla f\left(\mathbf{x}_{t}\right)
+$$
+    \item \green{Damped Newton method}:
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\frac{1}{1+\lambda_{f}\left(\mathbf{x}_{t}\right)} \nabla^{2} f\left(\mathbf{x}_{t}\right)^{-1} \nabla f\left(\mathbf{x}_{t}\right),
+$$
+where $\lambda_{f}(\mathbf{x})=\left\|\left[\nabla^{2} f(\mathbf{x})\right]^{-1 / 2} \nabla f(\mathbf{x})\right\|$ is the Newton decrement.
+    \item \green{Regularization approach}: regularize the Hessian and adjust $\gamma_{t}$ properly
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\left[\gamma_{t} I+\nabla^{2} f\left(\mathbf{x}_{t}\right)\right]^{-1} \nabla f\left(\mathbf{x}_{t}\right)
+$$
+    \item \green{Trust-region approach}:
+$$
+\begin{aligned}
+\mathbf{x}_{t+1}&=\underset{\mathbf{x}}{\operatorname{argmin}} \quad f\left(\mathbf{x}_{t}\right)+\nabla f\left(\mathbf{x}_{t}\right)^{\top}\left(\mathbf{x}-\mathbf{x}_{t}\right) \\
+&\quad \quad +\frac{1}{2}\left(\mathbf{x}-\mathbf{x}_{t}\right)^{\top} \nabla^{2} f\left(\mathbf{x}_{t}\right)\left(\mathbf{x}-\mathbf{x}_{t}\right) \\
+& \text { s.t. }\left\|\mathbf{x}-\mathbf{x}_{t}\right\| \leq \Delta_{k} .
+\end{aligned}
+$$
+\end{itemize}
+
+
+
+
+
+
+
+\subsection*{Lipschitz Hessian}
+\begin{itemize}[leftmargin=*]
+    \item Recall for functions $f$ with $L_{1}$-Lipschitz gradient, we have
+$$
+f(\mathbf{x}) \leq f\left(\mathbf{x}_{t}\right)+\nabla f\left(\mathbf{x}_{t}\right)^{\top}\left(\mathbf{x}-\mathbf{x}_{t}\right)+\frac{L_{1}}{2}\left\|\mathbf{x}-\mathbf{x}_{t}\right\|^{2}
+$$
+
+GD can be viewed as iteratively minimizing the quadratic upper bound function.
+    \item Now assuming \red{$f$ has $L_{2}$-Lipschitz Hessian}, similarly, we can show that
+    $$
+    \begin{aligned}
+    f(\mathbf{x}) &\leq f\left(\mathbf{x}_{t}\right)+\nabla f\left(\mathbf{x}_{t}\right)^{\top}\left(\mathbf{x}-\mathbf{x}_{t}\right) \\
+    &\quad +\frac{1}{2}\left(\mathbf{x}-\mathbf{x}_{t}\right)^{\top} \nabla^{2} f\left(\mathbf{x}_{t}\right)\left(\mathbf{x}-\mathbf{x}_{t}\right)+\frac{L_{2}}{6}\left\|\mathbf{x}-\mathbf{x}_{t}\right\|^{3}
+    \end{aligned}
+    $$
+
+(\red{Proof see Hw11 Ex4})
+\end{itemize}
+
+
+
+
+
+\subsection*{Cubic Regularization: The Algorithm}
+$$\mathbf{x}_{t+1} \in \underset{\mathbf{x}}{\operatorname{argmin}} \hat{f}\left(\mathbf{x}, \mathbf{x}_{t}\right)$$
+$$
+\begin{aligned}
+\hat{f}\left(\mathbf{x}, \mathbf{x}_{t}\right)&:=f\left(\mathbf{x}_{t}\right)+\nabla f\left(\mathbf{x}_{t}\right)^{\top}\left(\mathbf{x}-\mathbf{x}_{t}\right)\\
+& \quad +\frac{1}{2}\left(\mathbf{x}-\mathbf{x}_{t}\right)^{\top} \nabla^{2} f\left(\mathbf{x}_{t}\right)\left(\mathbf{x}-\mathbf{x}_{t}\right)+\frac{M}{6}\left\|\mathbf{x}-\mathbf{x}_{t}\right\|^{3}
+\end{aligned}
+$$
+
+
+
+
+
+\subsection*{Cubic Regularization: Global Analysis}
+\navy{Key facts}:
+\begin{itemize}[leftmargin=*]
+    \item $\nabla^{2} f\left(\mathbf{x}_{t}\right)+\frac{M}{2}\left\|\mathbf{x}_{t}-\mathbf{x}_{t+1}\right\| \cdot I \succeq 0$
+    \item $\left\|\nabla f\left(\mathbf{x}_{t+1}\right)\right\| \leq \frac{L_{2}+M}{2}\left\|\mathbf{x}_{t}-\mathbf{x}_{t+1}\right\|^{2}$
+    \item $-f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}_{t+1}\right) \geq \frac{M}{12}\left\|\mathbf{x}_{t}-\mathbf{x}_{t+1}\right\|^{3}$ if $M \geq L_{2}$.
+\end{itemize}
+\navy{Implications}:
+\begin{itemize}[leftmargin=*]
+    \item \melon{Convergence to a second-order stationary point}: If $\mathbf{x}^{*}$ is a limiting point, then $\nabla f\left(\mathbf{x}^{*}\right)=0, \nabla^{2} f\left(\mathbf{x}^{*}\right) \succeq 0$
+    \item \melon{Convergence rate}: We have $\min _{1 \leq i \leq t}\left\|\nabla f\left(\mathbf{x}_{i}\right)\right\|=\O\left(\frac{1}{t^{2 / 3}}\right)$.
+    \item \melon{Convex setting}: If $f$ is convex, we have $f\left(\mathbf{x}_{t}\right)-f^{*}=\O\left(\frac{1}{t^{2}}\right)$.
+    \item \melon{Strongly convex setting}: If $f$ is strongly convex, it implies superlinear convergence.
+\end{itemize}
+(\red{Proof see Handout11 Page 14})
+
+
+
+
+\subsection*{Cubic Regularization: Extension}
+\begin{itemize}[leftmargin=*]
+    \item \green{Accelerated Cubic Regularization}: For convex functions, can achieve $\O\left(\frac{1}{t^{3}}\right)$ convergence rate
+    \item \green{High-order Tensor Method}: For convex functions and $p$-th order method, can achieve $\O\left(\frac{1}{t^{p+1}}\right)$ convergence rate.
+    \item \green{Lower bound}: For $p$-th order method, the lower complexity bound is $\Omega\left(\frac{1}{t^{(3 p+1) / 2}}\right)$
+\end{itemize}
+
+
+
+
+\pink{Part B: Modern Nonconvex Optimization}
+\subsection*{Nonconvex SGD}
+Consider the stochastic optimization problem:
+$$
+\min _{\mathbf{x} \in \mathbb{R}^{d}} F(\mathbf{x}):=\mathbb{E}_{\boldsymbol{\xi}}[f(\mathbf{x}, \boldsymbol{\xi})] \quad\left[\text { or } F(\mathbf{x}):=\frac{1}{n} \sum_{i=1}^{n} f_{i}(\mathbf{x})\right]
+$$
+SGD:
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\gamma_{t} \nabla f\left(\mathbf{x}_{t}, \boldsymbol{\xi}_{t}\right), \text { where } \boldsymbol{\xi}_{t} \stackrel{i i d}{\sim} P(\boldsymbol{\xi})
+$$
+
+
+
+\subsection*{Thm 11.1 Convergence of Nonconvex SGD}
+Assume that 
+\begin{itemize}[leftmargin=*]
+    \item Function $F$ is $L$-smooth,
+    \item The unbiased estimator satisfies that for all $\mathbf{x}: \mathbb{E}\left[\|\nabla f(\mathbf{x}, \boldsymbol{\xi})-\nabla F(\mathbf{x})\|_{2}^{2}\right] \leq \sigma^{2}$.
+\end{itemize}
+
+Under the above assumption, SGD with $\gamma_{t}=\min \left\{\frac{1}{L}, \frac{\gamma}{\sigma \sqrt{T}}\right\}$ achieves:
+$$
+\mathbb{E}\left[\left\|\nabla F\left(\hat{\mathbf{x}}_{T}\right)\right\|^{2}\right] \leq \frac{\sigma}{\sqrt{T}}\left(\frac{2\left(F\left(\mathbf{x}_{1}\right)-F\left(\mathbf{x}^{*}\right)\right)}{\gamma}+L \gamma\right)
+$$
+where $\hat{\mathbf{x}}_{T}$ is selected uniformly at random from $\left\{\mathbf{x}_{1}, \ldots, \mathbf{x}_{T}\right\}$.
+
+
+
+\subsection*{Variance-reduced SGD for Nonconvex Optimization}
+Handout11 Pages 29-30
+
+
+
+
+\subsection*{Stationary Points}
+A \green{stationary point} can be a local minimum, a local maximum, or a saddle point.
+\begin{itemize}[leftmargin=*]
+    \item If $\nabla^{2} F(\overline{\mathbf{x}}) \succ 0$, then $\overline{\mathbf{x}}$ is a \green{local minimum}.
+    \item If $\nabla^{2} F(\overline{\mathbf{x}}) \prec 0$, then $\overline{\mathbf{x}}$ is a \green{local maximum}.
+    \item If $\nabla^{2} F(\overline{\mathbf{x}})$ has positive and negative eigenvalues, then $\overline{\mathbf{x}}$ is a \green{(strict) saddle point}.
+    \item Otherwise, it remains inconclusive.
+\end{itemize}
+
+
+
+
+
+\subsection*{Thm 11.2 GD with Random Initialization (informal)}
+If $f$ satisfies the strict saddle property, then \green{GD with random initialization} and sufficiently small constant stepsize converges to a local minimum or negative infinity almost surely.
+
+The analysis is not specific to GD and can apply to other algorithms.
+
+
+
+
+
+
+\subection*{Noisy SGD}
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\eta \nabla f\left(\mathbf{x}_{t}, \xi_{t}\right)+\mathbf{z}
+$$
+where the noise $\mathbf{z}$ is uniformly sampled from unit sphere.
+
+\subsubsection*{Thm 11.3 (informal)}
+If $f$ satisfies the strict saddle property and has Lipschitz Hessian, then Noisy SGD with sufficiently small stepsize converges to an $\epsilon$-second order stationary point in  $\text{poly}(d / \epsilon)$ steps.
+
+Handout11 Page 41
+
+
+
+
+
+
+
+
+
+\subsection*{Convergence to global minima}
+For problems with benign nonconvexity.
+
+Handout11 Page 44

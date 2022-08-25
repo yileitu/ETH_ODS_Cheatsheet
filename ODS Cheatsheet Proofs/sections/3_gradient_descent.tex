@@ -1,0 +1,156 @@
+\section*{3. Gradient Descent}
+\subsection*{Vanilla Analysis}
+$\mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right)=\frac{1}{\gamma}\left(\mathbf{x}_{t}-\mathbf{x}_{t+1}\right)^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right)$
+
+Apply $2 \mathbf{v}^{\top} \mathbf{w}=\|\mathbf{v}\|^{2}+\|\mathbf{w}\|^{2}-\|\mathbf{v}-\mathbf{w}\|^{2}$ (cosine theorem) to rewrite
+$$
+\begin{aligned}
+\mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right) &=\frac{1}{2 \gamma}\left(\left\|\mathbf{x}_{t}-\mathbf{x}_{t+1}\right\|^{2}+\left\|\mathbf{x}_{t}-\mathbf{x}^{\star}\right\|^{2}-\left\|\mathbf{x}_{t+1}-\mathbf{x}^{\star}\right\|^{2}\right) \\
+&=\frac{\gamma}{2}\left\|\mathbf{g}_{t}\right\|^{2}+\frac{1}{2 \gamma}\left(\left\|\mathbf{x}_{t}-\mathbf{x}^{\star}\right\|^{2}-\left\|\mathbf{x}_{t+1}-\mathbf{x}^{\star}\right\|^{2}\right)
+\end{aligned}
+$$
+
+Sum this up over the first $T$ iterations:
+$$
+\sum_{t=0}^{T-1} \mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right)=\frac{\gamma}{2} \sum_{t=0}^{T-1}\left\|\mathbf{g}_{t}\right\|^{2}+\frac{1}{2 \gamma}\left(\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}-\left\|\mathbf{x}_{T}-\mathbf{x}^{\star}\right\|^{2}\right)
+$$
+
+Remember:
+$
+f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right) \leq \mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right)
+$.Plug this lower bound into Vanilla Analysis:
+$$
+\begin{aligned}
+\sum_{t=0}^{T-1}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) & \leq \sum_{t=0}^{T-1} \mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right) \\
+&=\frac{\gamma}{2} \sum_{t=0}^{T-1}\left\|\mathbf{g}_{t}\right\|^{2}+\frac{1}{2 \gamma}\left(\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}-\left\|\mathbf{x}_{T}-\mathbf{x}^{\star}\right\|^{2}\right) \\
+& \leq \frac{\gamma}{2} \sum_{t=0}^{T-1}\left\|\mathbf{g}_{t}\right\|^{2}+\frac{1}{2 \gamma}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}
+\end{aligned}
+$$
+
+\subsection*{Thm 3.1 (Lipschitz Cvx Func $\mathcal{O}\left(1 / \varepsilon^{2}\right)$ Steps)}
+Plug $\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\| \leq R$ and $\left\|\mathbf{g}_{t}\right\| \leq B$ into Vanilla Analysis $\|$ :
+$$
+\sum_{t=0}^{T-1}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) \leq \frac{\gamma}{2} \sum_{t=0}^{T-1}\left\|\mathbf{g}_{t}\right\|^{2}+\frac{1}{2 \gamma}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2} \leq \frac{\gamma}{2} B^{2} T+\frac{1}{2 \gamma} R^{2}
+$$
+
+Choose $\gamma$ such that$q(\gamma)=\frac{\gamma}{2} B^{2} T+\frac{R^{2}}{2 \gamma}$is minimized.
+
+Solving $q^{\prime}(\gamma)=0$ yields the minimum $\gamma=\frac{R}{B \sqrt{T}}$, and $q(R /(B \sqrt{T}))=R B \sqrt{T}$. Dividing by $T$, the result follows.
+
+\subsection*{Lemma 3.3}
+$g$ being convex is by the first-order characterization equivalent to
+$$
+g(\mathbf{y}) \geq g(\mathbf{x})+\nabla g(\mathbf{x})^{\top}(\mathbf{y}-\mathbf{x}), \quad \mathbf{x}, \mathrm{y} \in \operatorname{dom}(\mathrm{g})
+$$
+Using the definition of $\mathrm{g}$, this is equivalent to
+$$
+\frac{L}{2} y^{\top} \mathbf{y}-f(y) \geq \frac{L}{2} \mathbf{x}^{\top} \mathbf{x}-\mathrm{f}(\mathbf{x})+(\mathrm{Lx}-\nabla f(x))^{\top}(\mathbf{y}-\mathrm{x})
+$$
+Reordering terms, this is in turn equivalent to
+$$
+f(y) \leq f(x)+\nabla f(x)(y-x)+\frac{L}{2} y^{\top} y-\frac{L}{2} x^{\top} x-L x^{\top}(y-x)
+$$
+Since
+$
+\frac{L}{2} y^{\top} y-\frac{L}{2} x^{\top} x-L x^{\top}(y-x)=\frac{L}{2} y^{\top} y+\frac{L}{2} x^{\top} x-L x^{\top} y=\frac{L}{2}\|x-y\|^{2}
+$
+we get the definition of smoothness, so the statement follows.
+
+
+\subsection*{Lemma 3.4}
+As the function $\mathbf{x} \mapsto \mathbf{b}^{\top} \mathbf{x}+\mathrm{c}$ is affine and hence smooth with parameter 0 , it suffices by Lemma $3.6$ to restrict ourselves to the case $f(x):=x^{\top} \vect{Q} x$.
+
+Because $\vect{Q} $ is symmetric, $x^{\top} \vect{Q}  y=y^{\top} \vect{Q}  x$ for any $x$ and $y$. Thus, a simple calculation shows that
+$$
+\begin{aligned}
+f(y)=y^{\top} \vect{Q}  y &=x^{\top} \vect{Q}  x+2 x^{\top} \vect{Q} (y-x)+(x-y)^{\top} \vect{Q} (x-y) \\
+&=f(x)+2 x^{\top} \vect{Q} (y-x)+(x-y)^{\top} \vect{Q} (x-y)
+\end{aligned}
+$$
+Cauchy-Schwarz for $(\mathbf{x}-\mathbf{y})^{\top} \vect{Q} (\mathrm{x}-\mathrm{y}) \leq\|\mathrm{x}-\mathrm{y}\|\|\mathrm{Q}(\mathrm{x}-\mathrm{y})\|$, and using and the definition of spectral norm for $\|\vect{Q} (x-y)\| \leq\|\vect{Q} \|\|x-y\|$ we get
+$$
+f(y) \leq f(x)+2 x^{\top} \vect{Q} (y-x)+\|\vect{Q} \|\|x-y\|^{2},
+$$
+Because $\|x-y\|^{2}$ vanishes as $(x-y)$ goes to 0 , differentiability of $f$ (Definition 2.5) implies that $\nabla f(x)^{\top}=2 x^{\top} Q$, so we further get
+$$
+f(y) \leq f(x)+\nabla f(x)(y-x)+\frac{2\|Q\|}{2}\|x-y\|^{2},
+$$
+That is, $f$ is smooth with parameter $2\|Q\|$.
+
+\subsection*{Lemma 3.6}
+For (1), we sum up the weighted smoothness conditions for all the $f_{i}$ to obtain
+$$
+\sum_{i=1}^{m} \lambda_{i} f_{i}(x) \leq \sum_{i=1}^{m} \lambda_{i} f_{i}(y)+\sum_{i=1}^{m} \lambda_{i} \nabla f_{i}(x)^{\top}(y-x)+\sum_{i=1}^{m} \lambda_{i} \frac{L_{i}}{2}\|x-y\|^{2} .
+$$
+As the gradient is a linear operator, this equivalently reads as
+$$
+f(x) \leq f(y)+\nabla f(x)^{\top}(y-x)+\frac{\sum_{i=1}^{m} \lambda_{i} L_{i}}{2}\|x-y\|^{2}
+$$
+and the statement follows.
+
+For (2), we apply smoothness of $f$ at $x^{\prime}=A x+b$ and $y^{\prime}=A y+b$ to obtain
+$$
+f(A x+b) \leq f(A y+b)+\nabla f(A x+b)^{\top}(A(y-x))+\frac{L}{2}\|A(x-y)\|^{2}
+$$
+As $\nabla(\mathrm{f} \circ \mathrm{g})(\mathbf{x})^{\top}=\nabla f(A \mathbf{x}+\mathbf{b})^{\top} A$ (chain rule (Lemma 2.6), using that $\operatorname{Dg}(\mathbf{x})=A$, an easy consequence of Definition 2.5). This equivalently reads as
+$$
+(f \circ g)(x) \leq(f \circ g)(y)+\nabla(f \circ g)(x)^{\top}(y-x)+\frac{L}{2}\|A(x-y)\|^{2}
+$$
+The statement now follows from $\|A(x-y)\| \leq\|A\|\|x-y\|$.
+
+\subsection*{Lemma 3.7 Sufficient Decrease}
+Use smoothness and definition of gradient descent $\left(\mathbf{x}_{t+1}-\mathbf{x}_{t}=-\nabla f\left(\mathbf{x}_{t}\right) / L\right)$ :
+$$
+\begin{aligned}
+f\left(\mathbf{x}_{t+1}\right) & \leq f\left(\mathbf{x}_{t}\right)+\nabla f\left(\mathbf{x}_{t}\right)^{\top}\left(\mathbf{x}_{t+1}-\mathbf{x}_{t}\right)+\frac{L}{2}\left\|\mathbf{x}_{t}-\mathbf{x}_{t+1}\right\|^{2} \\
+&=f\left(\mathbf{x}_{t}\right)-\frac{1}{L}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2}+\frac{1}{2 L}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2} \\
+&=f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2}
+\end{aligned}
+$$
+
+\subsection*{Thm 3.8 Smooth Convex Func $\mathcal{O}(1 / \varepsilon)$ Steps }
+Vanilla Analysis II:
+$$
+\sum_{t=0}^{T-1}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) \leq \frac{\gamma}{2} \sum_{t=0}^{T-1}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2}+\frac{1}{2 \gamma}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2} .
+$$
+
+This time, we can bound the squared gradients by sufficient decrease:
+$$
+\frac{1}{2 L} \sum_{t=0}^{T-1}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2} \leq \sum_{t=0}^{T-1}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}_{t+1}\right)\right)=f\left(\mathbf{x}_{0}\right)-f\left(\mathbf{x}_{T}\right) .
+$$
+Putting it together with $\gamma=1 / L$ :
+$$
+\begin{aligned}
+\sum_{t=0}^{T-1}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) & \leq \frac{1}{2 L} \sum_{t=0}^{T-1}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2}+\frac{L}{2}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2} \\
+& \leq f\left(\mathbf{x}_{0}\right)-f\left(\mathbf{x}_{T}\right)+\frac{L}{2}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}
+\end{aligned}
+$$
+Rewriting:
+$
+\sum_{t=1}^{T}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) \leq \frac{L}{2}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2} .
+$
+
+As last iterate is the best (sufficient decrease!):
+$$
+f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq \frac{1}{T}\left(\sum_{t=1}^{T}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right)\right) \leq \frac{L}{2 T}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2} .
+$$
+
+
+\subsection*{Lemma 3.11 Strongly Cvx Func}
+$g$ being convex is by the first-order characterization equivalent to
+$$
+g(y) \geq g(x)+\nabla g(x)^{\top}(\mathbf{y}-\mathbf{x}), \quad \mathbf{x}, \mathrm{y} \in \operatorname{dom}(g) .
+$$
+Using the definition of $\mathrm{g}$, this is equivalent to
+$$
+f(y)-\frac{\mu}{2} y^{\top} y \geq f(x)-\frac{\mu}{2} x^{\top} x+(\nabla f(x)-\mu x)^{\top}(y-x)
+$$
+Reordering terms, this is in turn equivalent to
+$$
+f(y) \geq f(x)+\nabla f(x)(y-x)+\frac{\mu}{2} y^{\top} y-\frac{\mu}{2} x^{\top} x-\mu x^{\top}(y-x) .
+$$
+Since
+$$
+\frac{\mu}{2} y^{\top} y-\frac{\mu}{2} x^{\top} x-\mu x^{\top}(y-x)=\frac{\mu}{2} y^{\top} y+\frac{\mu}{2} x^{\top} x-\mu x^{\top} y=\frac{\mu}{2}\|x-y\|^{2}
+$$
+we get the definition of strong convexity, so the statement follows.

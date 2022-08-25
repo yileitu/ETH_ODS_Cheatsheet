@@ -1,0 +1,236 @@
+\section*{3. Gradient Descent}
+\subsection*{Idea}
+\begin{itemize}[leftmargin=*]
+    \item Iterative Algorithm: Choose $\mathbf{x}_{0} \in \mathbb{R}^{d}$.
+$
+\mathbf{x}_{t+1}:=\mathbf{x}_{t}+\mathbf{v}_{t}
+$
+for \green{times} $t=0,1, \ldots$, and \green{steps} $\mathbf{v}_{t} \in \mathbb{R}^{d}$.
+    \item \green{Gradient descent}: Choose $\mathbf{x}_{0} \in \mathbb{R}^{d}$
+$
+\mathbf{x}_{t+1}:=\mathbf{x}_{t}-\gamma \nabla f\left(\mathbf{x}_{t}\right)
+$
+for \green{times} $t=0,1, \ldots$, and \green{stepsize} $\gamma \geq 0$.
+
+    \item \green{Abbreviate}: $\mathbf{g}_{t}:=\nabla f\left(\mathbf{x}_{t}\right)$ (gradient descent: $\mathbf{g}_{t}=\left(\mathbf{x}_{t}-\mathbf{x}_{t+1}\right) / \gamma$)
+\end{itemize}
+
+\subsection*{Vanilla Analysis}
+$\mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right) = \frac{\gamma}{2}\left\|\mathbf{g}_{t}\right\|^{2}+\frac{1}{2 \gamma}\left(\left\|\mathbf{x}_{t}-\mathbf{x}^{\star}\right\|^{2}-\left\|\mathbf{x}_{t+1}-\mathbf{x}^{\star}\right\|^{2}\right)$
+
+
+Upper bound for the \green{average error} $f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)$ over the first $T$ iterations:
+$$
+\begin{aligned}
+&\frac{1}{T} \sum_{t=0}^{T-1}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) \\ 
+&\leq \frac{1}{T}\left(\frac{\gamma}{2} \sum_{t=0}^{T-1}\left\|\mathbf{g}_{t}\right\|^{2}+\frac{1}{2 \gamma}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}\right) 
+\end{aligned}
+$$
+
+\subsection*{Lipschitz Convex Func: $\mathcal{O}\left(1 / \varepsilon^{2}\right)$ Steps}
+Assume that all gradients of $f$ are bounded in norm. Equivalent to $f$ being Lipschitz (\green{Thm 2.9} ).
+
+\subsubsection*{Thm 3.1}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be convex and differentiable with a global minimum $\mathbf{x}^{\star} ;$ furthermore, suppose that $\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\| \leq R$ and $\|\nabla f(\mathbf{x})\| \leq B$ for all $\mathbf{x}$. Choosing the stepsize $\gamma:=\frac{R}{B \sqrt{T}}$
+gradient descent yields
+$$
+\frac{1}{T} \sum_{t=0}^{T-1}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) \leq \frac{R B}{\sqrt{T}}
+$$
+
+Average error $\leq \frac{R B}{\sqrt{T}} \leq \varepsilon \Rightarrow T \geq \frac{R^{2} B^{2}}{\varepsilon^{2}}$
+
+\subsection*{Smooth Functions}
+Let $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ be differentiable, $X \subseteq \operatorname{dom}(f)$ convex, $L \in \mathbb{R}_{+\cdot} f$ is called smooth (with parameter $L$ ) over $X$ if
+$$
+f(\mathbf{y}) \leq f(\mathbf{x})+\nabla f(\mathbf{x})^{\top}(\mathbf{y}-\mathbf{x})+\frac{L}{2}\|\mathbf{x}-\mathbf{y}\|^{2}, \quad \forall \mathbf{x}, \mathbf{y} \in X .
+$$
+
+\begin{itemize}[leftmargin=*]
+    \item \red{Does not require convexity}.
+
+    \item In general, quadratic functions are smooth.
+    \item Affine functions are smooth with param $0$.
+\end{itemize}
+
+
+\subsubsection*{Lemma 3.3}
+Smoothness of $f(\mathbf{x})=$ convexity of $\frac{L}{2} \mathbf{x}^{\top} \mathbf{x}-f(\mathbf{x})$
+
+\subsubsection*{Lemma 3.4}
+Let $f(\mathbf{x})=\mathbf{x}^{\top} \vect{Q} \mathbf{x}+\mathbf{b}^{\top} \mathbf{x}+c$, where $\vect{Q}$ is a symmetric $(d \times d)$ matrix, $\mathbf{b} \in \mathbb{R}^{d}, c \in \mathbb{R}$. Then $f$ is smooth with parameter $2\|\vect{Q}\|_2$.
+
+\subsubsection*{Lemma 3.5}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be convex and differentiable. The following two statements are equivalent.
+\begin{enumerate}[label = (\arabic*), leftmargin=*]
+    \item $f$ is smooth with parameter $L$.
+    \item $\|\nabla f(\mathbf{x})-\nabla f(\mathbf{y})\| \leq L\|\mathbf{x}-\mathbf{y}\|$ for all $\mathbf{x}, \mathbf{y} \in \mathbb{R}^{d}$
+\end{enumerate}
+
+\subsubsection*{Lemma 3.6 Operations that preserve smoothness}
+\begin{enumerate}[label = (\arabic*), leftmargin=*]
+    \item Let $f_{1}, f_{2}, \ldots, f_{m}$ be functions that are smooth with parameters $L_{1}, L_{2}, \ldots, L_{m}$, and let $\lambda_{1}, \lambda_{2}, \ldots, \lambda_{m} \in \mathbb{R}_{+}$. Then the function $f:=\sum_{i=1}^{m} \lambda_{i} f_{i}$ is smooth with parameter $\sum_{i=1}^{m} \lambda_{i} L_{i}$.
+    \item Let $f$ be smooth with parameter $L$, and let $g(\mathbf{x})=\vect{A} \mathbf{x}+\mathbf{b}$, for $\vect{A} \in \mathbb{R}^{d \times m}$ and $\mathbf{b} \in \mathbb{R}^{d}$. Then the function $f \circ g$ is smooth with parameter $L\|\vect{A}\|^{2}_2$.
+\end{enumerate}
+
+
+\subsection*{Lemma 3.7 Sufficient Decrease}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be differentiable and \red{smooth} with parameter $L$. With stepsize $\gamma:=\frac{1}{L}$ gradient descent satisfies
+$$f\left(\mathbf{x}_{t+1}\right) \leq f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2}, \quad t \geq 0$$
+
+\red{This doesn't require convexity.}
+
+
+\subsubsection*{Corollary of Sufficient Decrease Lemma}
+Let ${g}$ be a L-smooth function and $\mathbf{x}^{*}$ be a minimizer of ${g}$. Then for any $\x \in \operatorname{dom}(g)$, we have
+$$
+g(\x)-g\left(\x^{*}\right) \geq \frac{1}{2 L}\|\nabla g(\x)\|_{2}^{2} .
+$$
+
+(\red{Proof see Hw6 Ex1})
+
+
+
+\subsection*{Thm 3.8 Smooth Convex Func: $\mathcal{O}(1 / \varepsilon)$ Steps}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be convex and differentiable with a global minimum $\mathbf{x}^{\star}$; furthermore, suppose that $f$ is smooth with parameter $L$. Choosing stepsize $\gamma:=\frac{1}{L}$ gradient descent yields $
+f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq \frac{L}{2 T}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}, \quad T>0
+$.
+
+Let $R^{2}:=\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}$, error $\leq \frac{L}{2 T} R^{2} \leq \varepsilon \Rightarrow T \geq \frac{R^{2} L}{2 \varepsilon} $ 
+
+
+
+
+\subsection*{Nesterov's Accelerated Gradient Descent (AGD): $\mathcal{O}(1 / \sqrt{\varepsilon})$ Steps}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be convex, differentiable, and smooth with parameter $L$. Choose $\mathbf{z}_{0}=\mathbf{y}_{0}=\mathbf{x}_{0}$ arbitrary. For $t \geq 0$, set
+$$
+\begin{aligned}
+\mathbf{y}_{t+1} &:=\mathbf{x}_{t}-\frac{1}{L} \nabla f\left(\mathbf{x}_{t}\right) \\
+\mathbf{z}_{t+1} &:=\mathbf{z}_{t}-\frac{t+1}{2 L} \nabla f\left(\mathbf{x}_{t}\right) \\
+\mathbf{x}_{t+1} &:=\frac{t+1}{t+3} \mathbf{y}_{t+1}+\frac{2}{t+3} \mathbf{z}_{t+1}
+\end{aligned}
+$$
+\subsubsection*{Thm 3.9 Error Bound of AGD}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be convex and differentiable with a global minimum $\mathbf{x}^{\star} ;$ furthermore, suppose that $f$ is smooth with parameter $L$. Accelerated gradient descent yields
+$$
+f\left(\mathbf{y}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq \frac{2 L\left\|\mathbf{z}_{0}-\mathbf{x}^{\star}\right\|^{2}}{T(T+1)}, \quad T>0 .
+$$
+
+
+\subsection*{Potential Function of AGD}
+Define the \green{potential} as
+$$
+\Phi(t):=t(t+1)\left(f\left(\mathbf{y}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right)+2 L\left\|\mathbf{z}_{t}-\mathbf{x}^{\star}\right\|^{2} .
+$$
+
+We can show that $\Phi(t+1) \leq \Phi(t)$ for every $t$. Rewriting $\Phi(T) \leq \Phi(0)$, we can claim the error bound in \melon{Thm 3.9}. 
+
+(\red{Proof see Handout03 Pages 29-30})
+
+
+\subsection*{Strongly Convex Func}
+Let $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ be a convex and differentiable function, $X \subseteq \operatorname{dom}(f)$ convex and $\mu \in \mathbb{R}_{+}, \mu>0$. Function $f$ is called strongly convex (with parameter $\mu$ ) over $X$ if
+$$
+f(\mathbf{y}) \geq f(\mathbf{x})+\nabla f(\mathbf{x})^{\top}(\mathbf{y}-\mathbf{x})+\frac{\mu}{2}\|\mathbf{x}-\mathbf{y}\|^{2}, \quad \forall \mathbf{x}, \mathbf{y} \in X .
+$$
+
+\subsubsection*{Lemma 3.11}
+Suppose that $\operatorname{dom}(f)$ is open and convex, and that $f: \operatorname{dom}(f) \rightarrow \mathbb{R}$ is differentiable. Let $\mu \in \mathbb{R}_{+}$. Then the following two statements are equivalent.
+(i) $f$ is strongly convex with parameter $\mu$.
+(ii) $g$ defined by $g(\mathbf{x})=f(\mathbf{x})-\frac{\mu}{2} \mathbf{x}^{\top} \mathbf{x}$ is convex over $\operatorname{dom}(g):=\operatorname{dom}(f)$.
+
+\begin{itemize}[leftmargin=*]
+    \item $f$ is $m$-strongly convex \red{iff} ${\displaystyle f''(\x)\geq m>0}$ for all $\x$.
+\end{itemize}
+
+\subsubsection*{Lemma 3.12}
+If $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ is strongly cvx with param $\mu>0$, then $f$ is strictly cvx and has a unique global min.
+
+
+\subsubsection*{Thm 3.14 Smooth and strongly convex func: $\mathcal{O}(\log (1 / \varepsilon))$ Steps}
+Let $f: \mathbb{R}^{d} \rightarrow \mathbb{R}$ be convex and differentiable with a global minimum $\mathbf{x}^{\star}$; suppose that $f$ is smooth with parameter $L$ and strongly convex with parameter $\mu>0$. Choosing $\gamma:=\frac{1}{L}$, gradient descent with arbitrary $\mathbf{x}_{0}$ satisfies the following two properties.
+
+(i) Squared distances to $\mathrm{x}^{\star}$ are geometrically decreasing:
+$$
+\begin{aligned}
+\left\|\mathbf{x}_{t+1}-\mathbf{x}^{\star}\right\|^{2} &\leq\left(1-\frac{\mu}{L}\right)\left\|\mathbf{x}_{t}-\mathbf{x}^{\star}\right\|^{2}, \quad t \geq 0 \\
+\left\|\mathbf{x}_{T}-\mathbf{x}^{\star}\right\|^{2} &\leq\left(1-\frac{\mu}{L}\right)^{T}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}
+\end{aligned}
+$$
+(ii) The absolute error after $T$ iterations is exponentially small in $T$ :
+$$
+f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq \frac{L}{2}\left(1-\frac{\mu}{L}\right)^{T}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}, \quad T>0 .
+$$
+
+Let $R^{2}:=\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}$. Then  error $\leq \frac{L}{2}\left(1-\frac{\mu}{L}\right)^{T} R^{2} \leq \varepsilon \Rightarrow  T \geq \frac{L}{\mu} \ln \left(\frac{R^{2} L}{2 \varepsilon}\right) $
+
+
+\subsection*{Summary: Lipschitz Continuous Gradient ($L$-smoothness)}
+A differentiable function $f$ is said to have an $L$-Lipschitz continuous gradient if for some $L>0$
+$$
+\|\nabla f(\x)-\nabla f(\y)\| \leq L\|\x-\y\|, \forall \x, \y
+$$
+
+Note: The definition \red{doesn't assume convexity }of $f$.
+
+\begin{enumerate}[label = (\arabic*), leftmargin=*]
+\setcounter{enumi}{-1}
+\item $\|\nabla f(\x)-\nabla f(\y)\| \leq L\|\x-\y\|, \forall \x, \y$.
+\item $g(\x)=\frac{L}{2} \x^{\top} \x-f(\x)$ is convex,$\forall \x$
+\item $f(\y) \leq f(\x)+\nabla f(\x)^{\top}(\y-\x)+\frac{L}{2}\|\y-\x\|^{2}, \forall \x, \y$.
+\item  $\left(\nabla f(\x)-\nabla f(\y)\right)^{\top}(\x-\y) \leq L\|\x-\y\|^{2}, \forall \x, \y$
+\item $f(\alpha \x+(1-\alpha) \y) \geq \alpha f(\x)+(1-\alpha) f(\y)-\frac{\alpha(1-\alpha) L}{2}\|\x-\y\|^{2}, \forall \x, \y$ and $\alpha \in[0,1]$
+\item  $f(\y) \geq f(\x)+\nabla f(\x)^{\top}(\y-\x)+\frac{1}{2 L}\|\nabla f(\y)-\nabla f(\x)\|^{2}, \forall \x, \y$.
+\item $\left(\nabla f(\x)-\nabla f(\y)\right)^{\top}(\x-\y) \geq \frac{1}{L}\|\nabla f(\x)-\nabla f(\y)\|^{2}, \forall \x, \y$
+\item $f(\alpha \x+(1-\alpha) \y) \leq \alpha f(\x)+(1-\alpha) f(\y)-\frac{\alpha(1-\alpha)}{2 L}\|\nabla f(\x)-\nabla f(\y)\|^{2}, \forall \x, \y$ and $\alpha \in[0,1]$
+\end{enumerate}
+Note: We assume that the domain for $f$ and $g$ are both $\mathbb{R}^{n}$, and hence convex set.
+
+For a function $f$ with a Lipschitz continuous gradient over $\mathbb{R}^{n}$, the following implications hold:
+$$
+[5] \equiv[7] \rightarrow[6] \rightarrow[0] \rightarrow[1] \equiv[2] \equiv[3] \equiv[4]
+$$
+
+If we further assume that $f$ is convex, then we have all the conditions $[0]-[7]$ are equivalent.
+
+
+
+
+\subsection*{Summary: Strong Convexity}
+A differentiable function $f$ is strongly convex if
+$
+f(\y) \geq f(\x)+\nabla f(\x)^{\top}(\y-\x)+\frac{\mu}{2}\|\y-\x\|^{2}
+$
+for some $\mu>0$ and all $x, y$
+Note: Strong convexity doesn't necessarily require the function to be differentiable, and the gradient is replaced by the sub-gradient when the function is non-smooth.
+
+\subsubsection*{Equivalent Conditions of Strong Convexity}
+The following conditions are all equivalent to the condition that a differentiable function $f$ is strongly-convex with constant $\mu>0$.
+\begin{enumerate}[label = (\roman*), leftmargin=*]
+\item $f(\y) \geq f(\x)+\nabla f(\x)^{\top}(\y-\x)+\frac{\mu}{2}\|\y-\x\|^{2}, \forall \x, \y$.
+\item $g(\x)=f(\x)-\frac{\mu}{2}\|\x\|^{2}$ is convex, $\forall x$.
+\item $(\nabla f(\x)-\nabla f(\y))^{\top}(\x-\y) \geq \mu\|\x-\y\|^{2}, \forall \x, \y$.
+\item $f(\alpha \x+(1-\alpha) \y) \leq \alpha f(\x)+(1-\alpha) f(\y)-\frac{\alpha(1-\alpha) \mu}{2}\|\x-\y\|^{2}, \alpha \in[0,1]$.
+\end{enumerate}
+
+For a continuously differentiable function $f$, the following conditions are all implied by strong convexity (SC) condition.
+\begin{enumerate}[label = (\alph*), leftmargin=*]
+\item $\frac{1}{2}\|\nabla f(\x)\|^{2} \geq \mu\left(f(\x)-f^{*}\right), \forall \x$.
+\item $\|\nabla f(\x)-\nabla f(\y)\| \geq \mu\|\x-\y\| \forall \x, \y$.
+\item $f(\y) \leq f(\x)+\nabla f(\x)^{\top}(\y-\x)+\frac{1}{2 \mu}\|\nabla f(\y)-\nabla f(\x)\|^{2}, \forall \x, \y$.
+\item $\left(\nabla f(\x)-\nabla f(\y)\right)^{\top}(\x-\y) \leq \frac{1}{\mu}\|\nabla f(\x)-\nabla f(\y)\|^{2}, \forall \x, \y$
+\end{enumerate}
+
+\subsubsection*{Additivity of Strongly Convex Functions}
+\begin{itemize}[leftmargin=*]
+    \item Assume that real functions $f$ is $a$-strongly convex and $g$ is $b$-strongly convex. Then the sum $f+g$ is also strongly convex, with parameter $a+b$. (\red{Proof see GA2 Solution6}) 
+    \item Let $h=f+g$ where $f$ is strongly convex with param $\mu$ and $g$ is convex, then $h$ is strongly convex with param $\mu$ .
+
+\end{itemize}
+
+
+
+
+
+
+
+

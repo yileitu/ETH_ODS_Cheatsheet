@@ -1,0 +1,89 @@
+\section*{4a. Projected Gradient Descent}
+\subsection*{Fact 4a.1 Properties of Projection}
+(i) $\Pi_{X}(\mathbf{y})$ is minimizer of (differentiable) convex function $d_{\mathbf{y}}(\mathbf{x})=\|\mathbf{x}-\mathbf{y}\|^{2}$ over $X$. By first-order characterization of optimality (Lemma 2.27),
+$$
+\begin{aligned}
+\quad 0 & \leq \nabla d_{\mathbf{y}}\left(\Pi_{X}(\mathbf{y})\right)^{\top}\left(\mathbf{x}-\Pi_{X}(\mathbf{y})\right) \\
+&=2\left(\Pi_{X}(\mathbf{y})-\mathbf{y}\right)^{\top}\left(\mathbf{x}-\Pi_{X}(\mathbf{y})\right) \\
+\Leftrightarrow \quad 0 & \geq 2\left(\mathbf{y}-\Pi_{X}(\mathbf{y})\right)^{\top}\left(\mathbf{x}-\Pi_{X}(\mathbf{y})\right) \\
+\Leftrightarrow \quad 0 & \geq\left(\mathbf{x}-\Pi_{X}(\mathbf{y})\right)^{\top}\left(\mathbf{y}-\Pi_{X}(\mathbf{y})\right)
+\end{aligned}
+$$
+
+(ii)
+$$
+\mathbf{v}:=\left(\mathbf{x}-\Pi_{X}(\mathbf{y})\right), \quad \mathbf{w}:=\left(\mathbf{y}-\Pi_{X}(\mathbf{y})\right)
+$$
+By (i),
+$$
+\begin{aligned}
+0 \geq 2 \mathbf{v}^{\top} \mathbf{w} &=\|\mathbf{v}\|^{2}+\|\mathbf{w}\|^{2}-\|\mathbf{v}-\mathbf{w}\|^{2} \\
+&=\left\|\mathbf{x}-\Pi_{X}(\mathbf{y})\right\|^{2}+\left\|\mathbf{y}-\Pi_{X}(\mathbf{y})\right\|^{2}-\|\mathbf{x}-\mathbf{y}\|^{2} .
+\end{aligned}
+$$
+
+
+\subsection*{Lemma 4a.3 Projected Sufficient Decrease}
+Use smoothness, $\mathbf{y}_{t+1}-\mathbf{x}_{t}=-\nabla f\left(\mathbf{x}_{t}\right) / L, 2 \mathbf{v} \mathbf{w}=\|\mathbf{v}\|^{2}+\|\mathbf{w}\|^{2}-\|\mathbf{v}-\mathbf{w}\|^{2}$ :
+$$
+\begin{aligned}
+f\left(\mathbf{x}_{t+1}\right) & \leq f\left(\mathbf{x}_{t}\right)+\nabla f\left(\mathbf{x}_{t}\right)^{\top}\left(\mathbf{x}_{t+1}-\mathbf{x}_{t}\right)+\frac{L}{2}\left\|\mathbf{x}_{t}-\mathbf{x}_{t+1}\right\|^{2} \\
+&=f\left(\mathbf{x}_{t}\right)-L\left(\mathbf{y}_{t+1}-\mathbf{x}_{t}\right)^{\top}\left(\mathbf{x}_{t+1}-\mathbf{x}_{t}\right)+\frac{L}{2}\left\|\mathbf{x}_{t}-\mathbf{x}_{t+1}\right\|^{2} \\
+&=f\left(\mathbf{x}_{t}\right)-\frac{L}{2}\left(\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t}\right\|^{2}+\left\|\mathbf{x}_{t+1}-\mathbf{x}_{t}\right\|^{2}-\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t+1}\right\|^{2}\right)
+\\ & \quad +\frac{L}{2}\left\|\mathbf{x}_{t}-\mathbf{x}_{t+1}\right\|^{2} \\
+&=f\left(\mathbf{x}_{t}\right)-\frac{L}{2}\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t}\right\|^{2}+\frac{L}{2}\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t+1}\right\|^{2} \\
+&=f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2}+\frac{L}{2}\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t+1}\right\|^{2}
+\end{aligned}
+$$
+
+
+\subsection*{Thm 4a.4 Smooth Convex Func over $X: \mathcal{O}(1 / \varepsilon)$ Steps}
+\subsubsection*{Constrained Vanilla Analysis}
+Replace $\mathbf{x}_{t+1}$ in the vanilla analysis with $\mathbf{y}_{t+1}$ (the unprojected):
+$$
+\mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right)=\frac{1}{2 \gamma}\left(\gamma^{2}\left\|\mathbf{g}_{t}\right\|^{2}+\left\|\mathbf{x}_{t}-\mathbf{x}^{\star}\right\|^{2}-\left\|\mathbf{y}_{t+1}-\mathbf{x}^{\star}\right\|^{2}\right) .
+$$
+
+Use Fact $4.1$ (ii): $\quad\left\|\mathbf{x}-\Pi_{X}(\mathbf{y})\right\|^{2}+\left\|\mathbf{y}-\Pi_{X}(\mathbf{y})\right\|^{2} \leq\|\mathbf{x}-\mathbf{y}\|^{2}$.
+
+With $\mathbf{x}=\mathbf{x}^{\star}, \mathbf{y}=\mathbf{y}_{t+1}$, we have $\Pi_{X}(\mathbf{y})=\mathbf{x}_{t+1}$, and hence
+$$
+\left\|\mathbf{x}^{\star}-\mathbf{x}_{t+1}\right\|^{2}+\underline{\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t+1}\right\|^{2}} \leq\left\|\mathbf{x}^{\star}-\mathbf{y}_{t+1}\right\|^{2}
+$$
+
+We get back to the standard vanilla analysis, but with a saving!
+$$
+\mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right) \leq \frac{1}{2 \gamma}\left(\gamma^{2}\left\|\mathbf{g}_{t}\right\|^{2}+\left\|\mathbf{x}_{t}-\mathbf{x}^{\star}\right\|^{2}-\left\|\mathbf{x}_{t+1}-\mathbf{x}^{\star}\right\|^{2}-\underline{\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t+1}\right\|^{2}}\right)
+$$
+
+\subsubsection*{Proof}
+Use $f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right) \leq \mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right)$ (convexity), vanilla analysis with saving, $\gamma=1 / L$ :
+$$
+\begin{aligned}
+\sum_{t=0}^{T-1}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) & \leq \sum_{t=0}^{T-1} \mathbf{g}_{t}^{\top}\left(\mathbf{x}_{t}-\mathbf{x}^{\star}\right) \\
+& \leq \frac{1}{2 L} \sum_{t=0}^{T-1}\left\|\mathbf{g}_{t}\right\|^{2}+\frac{L}{2}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}-\frac{L}{2} \sum_{t=0}^{T-1}\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t+1}\right\|^{2}
+\end{aligned}
+$$
+
+Use projected sufficient decrease to bound $\frac{1}{2 L} \sum_{t=0}^{T-1}\left\|\mathbf{g}_{t}\right\|^{2}$ by
+$$
+\begin{aligned}
+&\sum_{t=0}^{T-1}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}_{t+1}\right)+\frac{L}{2}\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t+1}\right\|^{2}\right) \\
+=&f\left(\mathbf{x}_{0}\right)-f\left(\mathbf{x}_{T}\right)+\frac{L}{2} \sum_{t=0}^{T-1}\left\|\mathbf{y}_{t+1}-\mathbf{x}_{t+1}\right\|^{2}
+\end{aligned}
+$$
+
+Putting it together: extra terms cancel, and as in unconstrained case, we get
+$$
+\sum_{t=1}^{T}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) \leq \frac{L}{2}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2} .
+$$
+
+Exercise 32: again, we make progress in every step (not immediate from projected sufficient decrease). Hence,
+$$
+f\left(\mathbf{x}_{T}\right)-f\left(\mathbf{x}^{\star}\right) \leq \frac{1}{T} \sum_{t=1}^{T}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) \leq \frac{L}{2 T}\left\|\mathbf{x}_{0}-\mathbf{x}^{\star}\right\|^{2}
+$$
+
+
+
+
+

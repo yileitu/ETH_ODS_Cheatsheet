@@ -1,0 +1,132 @@
+\section*{4b. Coordinate Descent}
+\subsection*{Lemma 4b.2 Strong convexity $\Rightarrow$ PL inequality}
+
+$$\begin{aligned} f\left(\mathbf{x}^{\star}\right) & \geq f(\mathbf{x})+\nabla f(\mathbf{x})^{\top}\left(\mathbf{x}^{\star}-\mathbf{x}\right)+\frac{\mu}{2}\left\|\mathbf{x}^{\star}-\mathbf{x}\right\|^{2} \quad \text { (strong convexity) } \\ & \geq f(\mathbf{x})+\min _{\mathbf{y}}\left(\nabla f(\mathbf{x})^{\top}(\mathbf{y}-\mathbf{x})+\frac{\mu}{2}\|\mathbf{y}-\mathbf{x}\|^{2}\right) \\ &=f(\mathbf{x})-\frac{1}{2 \mu}\|\nabla f(\mathbf{x})\|^{2} \end{aligned}$$
+
+
+\subsection*{Thm 4b.3 GD on Smooth Func with PL Ineq}
+For all $t$:
+$$
+\begin{array}{rlr}
+f\left(\mathbf{x}_{t+1}\right) & \leq f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2} \quad \text { (sufficient decrease, Lemma 3.7) } \\
+& \leq f\left(\mathbf{x}_{t}\right)-\frac{\mu}{L}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) & \text { (PL inequality) }
+\end{array}
+$$
+Subtract $f\left(\mathbf{x}^{\star}\right)$ on both sides:
+$$
+f\left(\mathbf{x}_{t+1}\right)-f\left(\mathbf{x}^{\star}\right) \leq\left(1-\frac{\mu}{L}\right)\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right)
+$$
+
+
+
+\subsection*{Lemma 4b.5 Coordinate-wise Sufficient Decrease}
+Apply coordinate-wise smoothness with $\lambda=-\nabla_{i} f\left(\mathbf{x}_{t}\right) / L_{i}$ and $\mathbf{x}_{t+1}=\mathbf{x}_{t}+\lambda \mathbf{e}_{i}$
+$$
+\begin{aligned}
+f\left(\mathbf{x}_{t+1}\right) & \leq f\left(\mathbf{x}_{t}\right)+\lambda \nabla_{i} f\left(\mathbf{x}_{t}\right)+\frac{L_{i}}{2} \lambda^{2} \\
+&=f\left(\mathbf{x}_{t}\right)-\frac{1}{L_{i}}\left|\nabla_{i} f\left(\mathbf{x}_{t}\right)\right|^{2}+\frac{1}{2 L_{i}}\left|\nabla_{i} f\left(\mathbf{x}_{t}\right)\right|^{2} \\
+&=f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L_{i}}\left|\nabla_{i} f\left(\mathbf{x}_{t}\right)\right|^{2}
+\end{aligned}
+$$
+
+
+
+
+
+\subsection*{Thm 4b.6}
+Coordinate-wise sufficient decrease:
+$$
+f\left(\mathbf{x}_{t+1}\right) \leq f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L}\left|\nabla_{i} f\left(\mathbf{x}_{t}\right)\right|^{2} .
+$$
+Taking expectations with respect to the choice of the active coordinate $i$ :
+$$
+\begin{aligned}
+\mathbb{E}\left[f\left(\mathbf{x}_{t+1}\right) \mid \mathbf{x}_{t}\right] & \leq f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L} \sum_{i=1}^{d} \frac{1}{d}\left|\nabla_{i} f\left(\mathbf{x}_{t}\right)\right|^{2} \\
+&=f\left(\mathbf{x}_{t}\right)-\frac{1}{2 d L}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|^{2} \\
+& \leq f\left(\mathbf{x}_{t}\right)-\frac{\mu}{d L}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right) \quad \text { (PL inequality) }
+\end{aligned}
+$$
+Subtracting $f\left(\mathbf{x}^{\star}\right)$ from both sides:
+$$
+\mathbb{E}\left[f\left(\mathbf{x}_{t+1}\right)-f\left(\mathbf{x}^{\star}\right) \mid \mathbf{x}_{t}\right] \leq\left(1-\frac{\mu}{d L}\right)\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right)
+$$
+Taking expectations with respect to $\mathbf{x}_{t}$ :
+$$
+\mathbb{E}\left[f\left(\mathbf{x}_{t+1}\right)-f\left(\mathbf{x}^{\star}\right)\right] \leq\left(1-\frac{\mu}{d I}\right) \mathbb{E}\left[f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right]
+$$
+
+
+
+
+
+
+\subsection*{Thm 4b.7 Importance Sampling}
+Sufficient decrease according to Lemma $5.5$ yields
+$$
+f\left(x_{t+1}\right) \leq f\left(x_{t}\right)-\frac{1}{2 L_{i}}\left|\nabla_{i} f\left(x_{t}\right)\right|^{2}
+$$
+if coordinate $i$ is chosen. By taking the expectation of both sides with respect to the choice of $i$, we have
+$$
+\begin{aligned}
+\mathbb{E}\left[\mathrm{f}\left(\mathrm{x}_{\mathrm{t}+1}\right) \mid \mathrm{x}_{\mathrm{t}}\right] & \leq f\left(\mathrm{x}_{\mathrm{t}}\right)-\sum_{i=1}^{\mathrm{d}} \frac{\mathrm{L}_{\mathrm{i}}}{\sum_{\mathrm{j}=1}^{\mathrm{d}} \mathrm{L}_{\mathrm{j}}} \frac{1}{2 \mathrm{~L}_{\mathrm{i}}}\left|\nabla_{i} f\left(\mathrm{x}_{\mathrm{t}}\right)\right|^{2} \\
+&=f\left(\mathrm{x}_{\mathrm{t}}\right)-\frac{1}{2 \sum_{j=1}^{\mathrm{d}} \mathrm{L}_{\mathrm{j}}} \sum_{i=1}^{\mathrm{d}}\left|\nabla_{i} \mathrm{f}\left(\mathrm{x}_{\mathrm{t}}\right)\right|^{2} \\
+&=f\left(\mathrm{x}_{\mathrm{t}}\right)-\frac{1}{2 \mathrm{~d} \overline{\mathrm{L}}}\left\|\nabla f\left(\mathrm{x}_{\mathrm{t}}\right)\right\|^{2} \\
+& \leq f\left(\mathrm{x}_{\mathrm{t}}\right)-\frac{\mu}{\mathrm{d} \overline{\mathrm{L}}}\left(\mathrm{f}\left(\mathrm{x}_{\mathrm{t}}\right)-\mathrm{f}\left(\mathrm{x}^{\star}\right)\right) \quad(\text { PL inequality (5.1)). }
+\end{aligned}
+$$
+Subtracting $f\left(x^{\star}\right)$ from both sides, we therefore obtain
+$$
+\mathbb{E}\left[\mathrm{f}\left(\mathrm{x}_{\mathrm{t}+1}\right)-\mathrm{f}\left(\mathrm{x}^{\star}\right) \mid \mathrm{x}_{\mathrm{t}}\right] \leq\left(1-\frac{\mu}{\mathrm{d} \overline{\mathrm{L}}}\right)\left(\mathrm{f}\left(\mathrm{x}_{\mathrm{t}}\right)-\mathrm{f}\left(\mathrm{x}^{\star}\right)\right)
+$$
+Taking expectations (over $x_{t}$ ), we obtain
+$$
+\mathbb{E}\left[f\left(x_{t+1}\right)-f\left(x^{\star}\right)\right] \leq\left(1-\frac{\mu}{d \bar{L}}\right) \mathbb{E}\left[f\left(x_{t}\right)-f\left(x^{\star}\right)\right]
+$$
+
+
+
+
+
+\subsection*{Lemma 4b.9}
+The main step is to show that
+$$
+\min _{\mathbf{y}}\left(\nabla f(\mathbf{x})^{\top}(\underbrace{\mathbf{y}-\mathbf{x}}_{=: \mathbf{z}})+\frac{\mu_{1}}{2}\|\mathbf{y}-\mathbf{x}\|_{1}^{2}\right)=-\frac{1}{2 \mu_{1}}\|\nabla f(\mathbf{x})\|_{\infty}^{2},
+$$
+the rest of the proof is the same as Lemma 5.2. Let
+$$
+g(z)=\nabla f(x)^{\top} z+\frac{\mu}{2}\|z\|_{1}^{2} .
+$$
+
+Fix $K \in \mathbb{R}$. Among all $z$ such that $\|z\|_{1}=K$, the ones minimizing $g$ are exactly the ones that have nonzero entries $z_{i}$ only where $\left|\nabla_{i} f(x)\right|=\|\nabla f(x)\|_{\infty}$. To see this, first observe that every such $z$ that minimizes $g$ has $\operatorname{sgn}\left(z_{i}\right) \neq \operatorname{sgn}\left(\nabla_{i} f(x)\right)$ whenever both signs are nonzero (otherwise, we could decrease $g$ by flipping the sign of $z_{i}$ ). Now suppose there is $z_{i} \neq 0$ for some $i$ such that $\left|\nabla_{i} f(x)\right|<\|\nabla f(\mathbf{x})\|_{\infty}$, and let $j$ be such that $\left|\nabla_{\mathfrak{j}} \mathrm{f}(\mathbf{x})\right|=\|\nabla \mathrm{f}(\mathbf{x})\|_{\infty}$. Then we can decrease $\left|z_{\mathrm{i}}\right|$ and increase $\left|z_{\mathrm{j}}\right|$ accordingly such that $\mathrm{g}$ decreases. On the other hand, having nonzero values only where $\left|\nabla_{i} f(\mathbf{x})\right|=\|\nabla f(\mathbf{x})\|_{\infty}$, we have $\nabla f(x)^{\top} z=K\|\nabla f(x)\|_{\infty}$.
+
+Knowing this, it follows that the minimum of $\mathrm{g}$ under the constraint $\|\mathrm{z}\|_{1}=\mathrm{K}$ is
+$$
+\mathrm{q}(\mathrm{K})=\mathrm{K}\|\nabla \mathrm{f}(\mathrm{x})\|_{\infty}+\frac{\mu_{1}}{2} \mathrm{~K}^{2}
+$$
+This is minimized by $\mathrm{K}^{*}=-\|\nabla f(\mathbf{x})\|_{\infty} / \mu_{1}$ and
+$$
+q\left(K^{\star}\right)=-\frac{1}{2 \mu_{1}}\|\nabla f(x)\|_{\infty}^{2}
+$$
+
+
+
+\subsection*{Thm 4b.10 Steeper coordinate descent}
+For all $t$:
+
+Coordinate-wise sufficient decrease for $i=\operatorname{argmax}_{i \in[d]}\left|\nabla_{i} f\left(\mathbf{x}_{t}\right)\right|$ :
+$$
+\begin{aligned}
+f\left(\mathbf{x}_{t+1}\right) & \leq f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L}\left|\nabla_{i} f\left(\mathbf{x}_{t}\right)\right|^{2}=f\left(\mathbf{x}_{t}\right)-\frac{1}{2 L}\left\|\nabla f\left(\mathbf{x}_{t}\right)\right\|_{\infty}^{2} \\
+& \leq f\left(\mathbf{x}_{t}\right)-\frac{\mu_{1}}{L}\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right) . \quad\left(\mathrm{PL} \text {ineq wrt} \ell_{\infty} \text {-norm }\right)\right.
+\end{aligned}
+$$
+
+Now it continues as for GD (subtracting $f\left(\mathrm{x}^{\star}\right)$ from both sides):
+$$
+f\left(\mathbf{x}_{t+1}\right)-f\left(\mathbf{x}^{\star}\right) \leq\left(1-\frac{\mu_{1}}{L}\right)\left(f\left(\mathbf{x}_{t}\right)-f\left(\mathbf{x}^{\star}\right)\right),
+$$
+
+
+
+
+

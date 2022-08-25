@@ -1,0 +1,353 @@
+\section*{12. Modern Nonsmooth Optimization}
+\pink{Part A: Mirror Descent}
+\subsection*{Bregman Divergence}
+Let $\omega(\cdot): \Omega \rightarrow \mathbb{R}$ be continuously differentiable on $\Omega$ and \red{1-strongly convex} w.r.t. some norm $\|\cdot\|: \omega(\mathbf{x}) \geq \omega(\mathbf{y})+\nabla \omega(\mathbf{y})^{\top}(\mathbf{x}-\mathbf{y})+\frac{1}{2}\|\mathbf{x}-\mathbf{y}\|^{2}, \forall x, y \in \Omega$.
+
+The \green{Bregman divergence} is defined as
+$$
+V_{\omega}(\mathbf{x}, \mathbf{y})=\omega(\mathbf{x})-\omega(\mathbf{y})-\nabla \omega(\mathbf{y})^{\top}(\mathbf{x}-\mathbf{y}), \forall \mathbf{x}, \mathbf{y} \in \Omega
+$$
+
+which implies
+$$
+V_{\omega}(\mathbf{x}, \mathbf{y}) \geq \frac{1}{2}\|\mathbf{x}-\mathbf{y}\|^{2}
+$$
+
+\subsubsection*{Examples}
+\begin{itemize}[leftmargin=*]
+    \item \green{Euclidean distance}: $\Omega=\mathbb{R}^{d}, \omega(\mathbf{x})=\frac{1}{2}\|\mathbf{x}\|_{2}^{2},\|\cdot\|=\|\cdot\|_{2}$
+$$
+V_{\omega}(\mathbf{x}, \mathbf{y})=\frac{1}{2}\|\mathbf{x}-\mathbf{y}\|_{2}^{2}
+$$
+    \item \green{Mahalanobis distance}: $\Omega=\mathbb{R}^{d}, \omega(\mathbf{x})=\frac{1}{2} \mathbf{x}^{T} \Q \mathbf{x}$ (where $\left.\Q \succeq \I\right),\|\cdot\|=\|\cdot\|_{2}$,
+$$
+V_{\omega}(\mathbf{x}, \mathbf{y})=\frac{1}{2}(\mathbf{x}-\mathbf{y})^{\top} \Q(\mathbf{x}-\mathbf{y})
+$$
+    \item \green{Kullback-Leibler divergence}: $\Omega=\Delta_{d}, \omega(\mathbf{x})=\sum_{i=1}^{d} x_{i} \log x_{i},\|\cdot\|=\|\cdot\|_{1}$,
+$$
+V_{\omega}(\mathbf{x}, \mathbf{y})=\mathrm{KL}(\mathbf{x} \mid \mathbf{y}):=\sum_{i=1}^{d} x_{i} \log \frac{x_{i}}{y_{i}}
+$$
+\end{itemize}
+
+\subsubsection*{Properties}
+\begin{itemize}[leftmargin=*]
+    \item \melon{Nonnegativity}: $V_{\omega}(\mathbf{x}, \mathbf{y}) \geq 0$.
+    \item \melon{Convexity}: $V_{\omega}(\mathbf{x}, \mathbf{y})$ is convex in $\mathbf{x}$.
+    \item $V_{\omega}(\mathbf{x}, \mathbf{y}) \geq \frac{1}{2}\|\mathbf{x}-\mathbf{y}\|^{2}$.
+    \item \red{Non-symmetry}: $V_{\omega}(\mathbf{x}, \mathbf{y}) \neq V_{\omega}(\mathbf{y}, \mathbf{x})$ in general.
+    \item \melon{Generalized Pythagorean Theorem}: Define the Bregman projection of a point $\z$ onto $X$ as:
+$$
+\Pi_{X}^{\omega}(\mathbf{z}):=\underset{\mathbf{x} \in \mathrm{X}}{\operatorname{argmin}} V_{\omega}(\mathbf{x}, \mathbf{z}) .
+$$
+
+Then for any $\mathrm{x} \in X, \mathrm{z} \in \Omega$ it holds that
+$$
+V_{\omega}(\x, \z) \geq V_{\omega}\left(\x, \Pi_{X}^{\omega}(\z)\right)+V_{\omega}\left(\Pi_{X}^{\omega}(\z), \z\right)
+$$
+
+(\red{Proof see Hw12 Ex1})
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Lemma 12.1 Three Point Identity}
+$$
+\begin{aligned}
+V_{\omega}(\mathbf{x}, \mathbf{z})=& V_{\omega}(\mathbf{x}, \mathbf{y})+V_{\omega}(\mathbf{y}, \mathbf{z})-\langle\nabla \omega(\mathbf{z})-\nabla \omega(\mathbf{y}), \mathbf{x}-\mathbf{y}\rangle \\
+& \quad \forall \mathbf{x}, \mathbf{y}, \mathbf{z} \in \Omega
+\end{aligned}
+$$
+
+\melon{Special case}: $\omega(\mathbf{x})=\frac{1}{2}\|\mathbf{x}\|_{2}^{2}$, this is the \green{law of cosine}:
+$$
+\|\mathbf{x}-\mathbf{z}\|_{2}^{2}=\|\mathbf{x}-\mathbf{y}\|_{2}^{2}+\|\mathbf{y}-\mathbf{z}\|_{2}^{2}-2\langle\mathbf{z}-\mathbf{y}, \mathbf{x}-\mathbf{y}\rangle
+$$
+
+
+
+
+
+\subsubsection*{Corollary of Lemma 12.1 Three Point Identity}
+Since $\mathbf{x}_{t+1}=\operatorname{argmin}_{\mathbf{x} \in X}\left\{V_{\omega}\left(\mathbf{x}, \mathbf{x}_{t}\right)+\left\langle\gamma_{t} \mathbf{g}_{t}, \mathbf{x}\right\rangle\right\}$, by the optimality condition,
+$$
+\begin{aligned}
+&\left\langle\nabla \omega\left(\mathbf{x}_{t+1}\right)+\gamma_{t} \mathbf{g}_{t}-\nabla \omega\left(\mathbf{x}_{t}\right), \mathbf{x}-\mathbf{x}_{t+1}\right\rangle \geq 0, \forall \mathbf{x} \in X \\
+\Rightarrow &\left\langle\nabla \omega\left(\x_{t+1}\right)-\nabla w\left(\x_{t}\right), \x-\x_{t+1}\right\rangle \geq \left\langle \gamma_{t} \g_{t}, \x_{t+1}-\x\right\rangle
+\end{aligned}
+$$
+
+From three point identity, we have for $\forall \mathbf{x} \in X$ :
+$$
+\begin{aligned}
+\left\langle\gamma_{t} \mathbf{g}_{t}, \mathbf{x}_{t+1}-\mathbf{x}\right\rangle &\leq \left\langle\nabla\left(\mathbf{x}_{t+1}\right)-\nabla \omega\left(\mathbf{x}_{t}\right), \mathbf{x}-\mathbf{x}_{t+1}\right\rangle \\
+&=V_{\omega}\left(\mathbf{x}, \mathbf{x}_{t}\right)-V_{\omega}\left(\mathbf{x}, \mathbf{x}_{t+1}\right)-\underbrace{V_{\omega}\left(\mathbf{x}_{t+1}, \mathbf{x}_{t}\right)}_{\geq \frac{1}{2}\left\|\mathbf{x}_{t}-\mathbf{x}_{t+1}\right\|^{2}}
+\end{aligned}
+$$
+
+\subsection*{Mirror Descent Algorithm}
+$$\mathbf{x}_{t+1}=\underset{\mathbf{x} \in X}{\operatorname{argmin}}\left\{V_{\omega}\left(\mathbf{x}, \mathbf{x}_{t}\right)+\left\langle\gamma_{t} \mathbf{g}_{t}, \mathbf{x}\right\rangle\right\}, \text{ where } \mathbf{g}_{t} \in \partial f\left(\mathbf{x}_{t}\right)$$
+\subsubsection*{Examples}
+\begin{itemize}[leftmargin=*]
+    \item \green{Subgradient descent}: $\omega(\mathbf{x})=\frac{1}{2}\|\mathbf{x}\|_{2}^{2}, V_{\omega}\left(\mathbf{x}, \mathbf{x}_{t}\right)=\frac{1}{2}\left\|\mathbf{x}-\mathbf{x}_{t}\right\|_{2}^{2}$
+$$
+\mathbf{x}_{t+1}=\Pi_{X}\left(\mathbf{x}_{t}-\gamma_{t} \mathbf{g}_{t}\right)
+$$
+    \item \green{Entropic descent}: $X=\Delta_{d}$, $\omega(\mathbf{x})=\sum_{i=1}^{d} x_{i} \log x_{i}, V_{\omega}\left(\mathbf{x},\ \mathbf{x}_{t}\right)=\mathrm{KL}\left(\mathbf{x} \mid \mathbf{x}_{t}\right)$.
+$$
+\mathbf{x}_{t+1} \propto \mathbf{x}_{t} \odot \exp \left(-\gamma_{t} \mathbf{g}_{t}\right)
+$$
+Here $\odot$ is element-wise multiplication.
+\end{itemize}
+
+
+
+
+
+
+
+\subsection*{Lemma 12.2}
+Let $f$ be convex and $\omega(\cdot)$ be 1-strongly convex on $X$ w.r.t. norm $\|\cdot\|_{\cdot}$
+$$\gamma_{t}\left(f\left(\mathbf{x}_{t}\right)-f^{*}\right) \leq V_{\omega}\left(\mathbf{x}^{*}, \mathbf{x}_{t}\right)-V_{\omega}\left(\mathbf{x}^{*}, \mathbf{x}_{t+1}\right)+\frac{\gamma_{t}^{2}}{2}\left\|\mathbf{g}_{t}\right\|_{*}^{2}$$
+
+
+\subsection*{Theorem 12.3}
+$$
+\min _{1 \leq t \leq T} f\left(\mathbf{x}_{t}\right)-f^{*} \leq \frac{V_{\omega}\left(\mathbf{x}^{*}, \mathbf{x}_{1}\right)+\frac{1}{2} \sum_{t=1}^{T} \gamma_{t}^{2}\left\|\mathbf{g}_{t}\right\|_{*}^{2}}{\sum_{t=1}^{T} \gamma_{t}}
+$$
+
+Suppose $f$ is $B$-Lipschitz continuous such that $|f(\mathbf{x})-f(\mathbf{y})| \leq B\|\mathbf{x}-\mathbf{y}\|$, namely, $\|\mathbf{g}\|_{*} \leq B$ for any $\mathbf{g} \in \partial f(\mathbf{x})$. Define $R^{2}:=\sup _{\mathbf{x} \in X} V_{\omega}\left(\mathbf{x}, \mathbf{x}_{1}\right)$, where $R \geq 0$ and set $\gamma_{t}=\frac{\sqrt{2} R}{B \sqrt{T}}$.
+$$
+\min _{1 \leq t \leq T} f\left(\mathbf{x}_{t}\right)-f^{*} \leq \O\left(\frac{B R}{\sqrt{T}}\right) .
+$$
+
+
+
+\subsubsection*{Mirror Descent for Smooth Objectives}
+Consider the problem $\min _{X} f(\x)$, where $X$ is closed and convex, and $f$ is convex and $L$-smooth such that $\|\nabla f(\x)-\nabla f(\y)\|_{*} \leq L\|\x-\y\|, \forall \x, \y \in X$ for some norm $\|\cdot\|$. This further implies that
+$$
+f(\x) \leq f(\y)+\langle\nabla f(\y), \x-\y\rangle+\frac{L}{2}\|\x-\y\|^{2} .
+$$
+
+By setting $\gamma_{\mathrm{t}}=1 / \mathrm{L}$, the sequence of iterates $\left\{\mathbb{x}_{{t}}\right\}$ generated by Mirror Descent:
+$$
+\mathbf{x}_{{t}+1}=\underset{\mathbf{x} \in {X}}{\operatorname{argmin}}\left\{{V}_{\omega}\left(\mathbf{x}, \mathbf{x}_{{t}}\right)+\left\langle\gamma_{{t}} \nabla f\left(\mathbf{x}_{{t}}\right), \mathbf{x}\right\rangle\right\}
+$$
+satisfies that
+$$
+\min _{1 \leq t \leq T} f\left(\x_{t+1}\right)-f\left(\x^{*}\right) \leq \frac{L \cdot V_{\omega}\left(\x^{*}, \x_{1}\right)}{T}
+$$
+
+
+(\red{Proof see Hw12 Ex2})
+
+\green{Subgradient descent}: special case with $\|\cdot\|=\|\cdot\|_{2}$ and $\omega(\cdot)=\frac{1}{2}\|\cdot\|_{2}^{2}$.
+
+
+
+
+
+
+\subsection*{Optimization over simplex}
+Assume $\|\mathbf{g}\|_{\infty} \leq 1, \forall \mathbf{g} \in \partial f(\mathbf{x})$ and $X=\Delta_{d}$. Set $\mathbf{x}_{1}=[1 / d ; \ldots ; 1 / d]$.
+\begin{itemize}[leftmargin=*]
+    \item Subgradient Descent: $\O\left(\frac{\sqrt{d}}{\sqrt{T}}\right)$, where $B=\O(\sqrt{d}), R=\O(1)$.
+    \item Mirror Descent: $\O\left(\frac{\sqrt{\log d}}{\sqrt{T}}\right)$, where $B=\O(1), R=\O(\sqrt{\log d})$.
+\end{itemize}
+
+
+
+
+
+
+
+
+\pink{Part B: Smoothing Techniques}
+\subsection*{Convex Conjugate Theory}
+\subsubsection*{Conjugate Function}
+The \green{conjugate function} of $f$ is
+$$
+f^{\star}(\mathbf{y})=\sup _{\mathbf{x} \in \operatorname{dom}(f)}\left\{\mathbf{y}^{T} \mathbf{x}-f(\mathbf{x})\right\}
+$$
+also called \green{Legendre-Fenchel transformation}.
+
+
+
+
+\subsubsection*{Fenchel's inequality}
+$f(\mathbf{x})+f^{*}(\mathbf{y}) \geq \mathbf{x}^{T} \mathbf{y}, \forall \mathbf{x}, \mathbf{y}$
+
+\subsubsection*{Lemma 12.5}
+\begin{enumerate}[label = (\arabic*), leftmargin=*]
+    \item \green{Duality}: If $f$ is \green{lower semi-continuous (l.s.c.)} and convex, then $f^{\star \star}=f$.
+    
+    Function $f$ is l.s.c. if $f(\mathbf{x}) \leq \liminf _{t \rightarrow \infty} f\left(\mathbf{x}_{t}\right)$ for $\mathbf{x}_{t} \rightarrow \mathbf{x}$.
+    
+    \item \green{Fenchel's inequality}: $\mathbf{x}^{T} \mathbf{y} \leq f(\mathbf{x})+f^{\star}(\mathbf{y})$.
+    \item If $f$ and $g$ are l.s.c. and convex, then $(f+g)^{\star}(\mathbf{x})=\inf _{\mathbf{y}}\left\{f^{\star}(\mathbf{y})+g^{\star}(\mathbf{x}-\mathbf{y})\right\}$.
+    \item If $f$ is $\mu$-strongly convex, then $f^{\star}$ is differentiable and $\frac{1}{\mu}$-smooth.
+\end{enumerate}
+
+
+\subsubsection*{Examples}
+\begin{itemize}[leftmargin=*]
+    \item Quadratic: $f(\mathbf{x})=\frac{1}{2} \mathbf{x}^{T} \Q \mathbf{x}$ where $\Q \succ 0, f^{\star}(y)=\frac{1}{2} \mathbf{y}^{T} \Q^{-1} \mathbf{y}$
+    \item Negative entropy: $f(\mathbf{x})=\sum_{i=1}^{n} x_{i} \log \left(x_{i}\right), f^{\star}(\mathbf{y})=\sum_{i=1}^{n} e^{y_{i}-1}$
+    \item Negative logarithm: $f(\mathbf{x})=-\sum_{i=1}^{n} \log \left(x_{i}\right), f^{\star}(\mathbf{y})=-\sum_{i=1}^{n} \log \left(-y_{i}\right)-n$.
+    \item Norm: $f(\mathbf{x})=\|\mathbf{x}\|, f^{\star}(\mathbf{y})= \begin{cases}0, & \|\mathbf{y}\|_{*} \leq 1 \\ +\infty, & \|\mathbf{y}\|_{*}>1\end{cases}$
+\end{itemize}
+
+
+
+
+
+
+
+
+
+\pink{Part B: Smoothing Techniques}
+\subsection*{Nesterov's Smoothing for Convex Functions}
+Assume $f$ is convex, then $f(\x) = (f^*)^* = \max_{\y} \{ \x^\top\y - f^*(\y) - \mu\cdot d(\y)\}$.
+
+\green{Nesterov's Smoothing} is 
+$$f_{\mu}(\mathbf{x})=\max _{\mathbf{y} \in \operatorname{dom}\left(f^{\star}\right)}\left\{\mathbf{x}^{T} \mathbf{y}-f^{\star}(\mathbf{y})-\mu \cdot d(\mathbf{y})\right\} = \bigl( f^* + \mu d(\cdot) \bigr)^*$$
+\begin{itemize}[leftmargin=*]
+    \item Here $f^{\star}(\mathbf{y})$ is the convex conjugate of $f$.
+    \item \green{Proximity function}: $d(\mathbf{y})$ is 1-strongly convex and nonnegative everywhere.
+    \begin{itemize}[leftmargin=*]
+        \item $ d(\mathbf{y})=\frac{1}{2}\left\|\mathbf{y}-\mathbf{y}_{0}\right\|_{2}^{2}$
+        \item $ d(\mathbf{y})=\frac{1}{2} \sum w_{i}\left(y_{i}-y_{0, i}\right)^{2}$ with $w_{i} \geq 1$;
+        \item $d(\mathbf{y})=\omega(\mathbf{y})-\omega\left(\mathbf{y}_{0}\right)-\nabla \omega\left(\mathbf{y}_{0}\right)^{\top}\left(\mathbf{y}-\mathbf{y}_{0}\right)$ with $\omega(\mathbf{x})$ being 1-strongly convex.
+    \end{itemize}
+    \item \melon{Smoothness}: Function $f_{\mu}(\mathbf{x})$ is $\frac{1}{\mu}$-smooth.
+    \item \melon{Approximation}: For convex $f$ with bounded $\operatorname{dom}\left(f^{\star}\right)$, we have
+$$
+f(\mathbf{x})-\mu D^{2} \leq f_{\mu}(\mathbf{x}) \leq f(\mathbf{x}) \text {, where } D^{2}=\max _{\mathbf{y} \in \operatorname{dom}\left(f^{\star}\right)} d(\mathbf{y}) .
+$$
+    \item Tradeoff between approximation error and optimization efficiency:
+$$
+f(\mathbf{x})-f^{*} \leq \underbrace{f(\mathbf{x})-f_{\mu}(\mathbf{x})}_{\text {approximation error }}+\underbrace{f_{\mu}(\mathbf{x})-\min _{x} f_{\mu}(\mathbf{x})}_{\text {optimization error }}
+$$
+    \item If we apply Accelerated Gradient Descent to solve the smoothed problem:
+$$
+f\left(\mathbf{x}_{t}\right)-f^{*} \leq \O\left(\mu D^{2}+\frac{R^{2}}{\mu t^{2}}\right) \leq \epsilon
+$$
+
+To achieve accuracy $\epsilon>0$, need $\mu=\O\left(\frac{\epsilon}{D^{2}}\right)$.
+
+The number of AGD iterations is at most $T_{\epsilon}=\O\left(\frac{R}{\sqrt{\epsilon \mu}}\right)=\O\left(\frac{R D}{\epsilon}\right)$.
+\end{itemize}
+
+
+
+
+
+\subsection*{Moreau-Yosida Regularization for Convex Functions}
+$$f_{\mu}(\mathbf{x})=\min _{\mathbf{y}}\left\{f(\mathbf{y})+\frac{1}{2 \mu}\|\mathbf{x}-\mathbf{y}\|_{2}^{2}\right\}$$
+\begin{itemize}[leftmargin=*]
+    \item Here $\mu>0$ and $f_{\mu}(\mathbf{x})$ is called the \green{Moreau envelope} of $f(\mathbf{x})$.
+    \item \green{Huber function} is Moreau envelope of $f(x)=|x|$:
+$$
+f_{\mu}(x)=\left\{\begin{array}{l}
+\frac{x^{2}}{2 \mu}, \quad |x| \leq \mu \\
+|x|-\frac{\mu}{2},\quad |x|>\mu
+\end{array} \right.
+$$
+
+
+    \item M-Y Regularization  is a special case of Nesterov's smoothing with $d(\mathbf{y})=\frac{1}{2}\|\mathbf{y}\|^{2}$.
+$$
+\begin{aligned}
+f_{\mu}(\mathbf{x}) &=\max _{\mathbf{y}}\left\{\mathbf{x}^{T} \mathbf{y}-f^{\star}(\mathbf{y})-\frac{\mu}{2}\|\mathbf{y}\|_{2}^{2}\right\} \\
+&=\left(f^{\star}+\frac{\mu}{2}\|\cdot\|_{2}^{2}\right)^{\star}(\mathbf{x}) \\
+&=\inf _{\mathbf{y}}\left\{f(\mathbf{y})+\frac{1}{2 \mu}\|\mathbf{x}-\mathbf{y}\|_{2}^{2}\right\}
+\end{aligned}
+$$
+    \item \melon{Smoothness}: Function $f_{\mu}(\mathbf{x})$ is $\frac{1}{\mu}$-smooth.
+    \item \melon{Exact Minimization}: $\min _{\mathbf{x}} f(\mathbf{x})=\min _{\mathbf{x}} f_{\mu}(\mathbf{x})$.
+\end{itemize}
+
+
+$$\operatorname{prox}_{\mu f}(\mathbf{x}):=\underset{\mathbf{y}}{\operatorname{argmin}}\left\{f(\mathbf{y})+\frac{1}{2 \mu}\|\mathbf{x}-\mathbf{y}\|_{2}^{2}\right\}$$
+\begin{itemize}[leftmargin=*]
+    \item Gradient of smooth function: (based on \green{Danskin's theorem} or Fenchel duality)
+$$
+\nabla f_{\mu}(\mathbf{x})=\frac{1}{\mu}\left(\mathbf{x}-\operatorname{prox}_{\mu f}(\mathbf{x})\right)
+$$
+    \item GD on smooth $f_{\mu}(\mathbf{x})$ reduces to proximal minimization on $f(\mathbf{x})$ :
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\mu \nabla f_{\mu}\left(\mathbf{x}_{t}\right) \Longleftrightarrow \mathbf{x}_{t+1}=\operatorname{prox}_{\mu f}\left(\mathbf{x}_{t}\right)
+$$
+\end{itemize}
+
+
+
+
+
+
+\subsection*{Proximal Operators}
+The proximal operator of convex function $g$ at $\mathbf{x}$ is defined as
+$$
+\operatorname{prox}_{f}(\mathbf{x})=\underset{\mathbf{y}}{\operatorname{argmin}}\left\{f(\mathbf{y})+\frac{1}{2}\|\mathbf{x}-\mathbf{y}\|_{2}^{2}\right\}
+$$
+
+For continuous convex function $f, \operatorname{prox}_{f}(\mathbf{x})$ exists and is unique.
+
+For many nonsmooth functions, proximal operators can be computed efficiently (closed form solution, low-cost computation, polynomial time).
+
+
+
+
+
+
+\subsubsection*{Properties}
+Let ${g}$ be a convex function with $\operatorname{dom}({g})=\mathbb{R}^{\mathrm{d}}$. Then we have
+\begin{itemize}[leftmargin=*]
+    \item (\melon{Subgradient characterization}) $\mathbf{y}=\operatorname{prox}_{{g}}(\mathbf{x}) \Longleftrightarrow \mathbf{x}-\mathbf{y} \in \partial {g}(\mathbf{y})$.
+    \item (\melon{Fixed Point}) A point $\mathbf{x}^{*}$ minimizes ${g}(\mathbf{x}) \Longleftrightarrow \mathbf{x}^{*}=\operatorname{prox}_{{g}}\left(\mathbf{x}^{*}\right)$.
+    \item (\melon{Non-expansiveness}) $\left\|\operatorname{prox}_{g}(\mathbf{x})-\operatorname{prox}_{g}(\mathbf{y})\right\|_{2} \leq\|\mathbf{x}-\mathbf{y}\|_{2}$.
+    
+    (\red{Proof see Hw12 Ex3})
+\end{itemize}
+
+
+
+\subsubsection*{Examples}
+If $f(\mathbf{x})=\delta_{X}(\mathbf{x})=\left\{\begin{array}{ll}0, & \mathbf{x} \in X \\ +\infty, & \mathbf{x} \notin X\end{array}\right.$, then $\operatorname{prox}_{f}(\mathbf{x})=\Pi_{X}(\mathbf{x})$ is the projection.
+
+If $f(\mathbf{x})=\mu\|\mathbf{x}\|_{1}$, then $\operatorname{prox}_{f}(\mathbf{x})$ is the \green{soft thresholding operator}.
+$$\operatorname{prox}_{\mu|\cdot|}\left(x_{i}\right)= \begin{cases}x_{i}-\mu & \text { if } x_{i}>\mu \\ 0 & \text { if }\left|x_{i}\right| \leq \mu \\ x_{i}+\mu & \text { if } x_{i}<-\mu\end{cases}$$
+Equivalently, $\operatorname{prox}_{\mu\|\cdot\|_{1}}(\mathbf{x})=\operatorname{sign}(\mathbf{x}) \odot \max \{|\mathbf{x}|-\mu, 0\}$
+
+
+
+
+
+
+\subsection*{Proximal Point Algorithm}
+$$
+\text{PPA:} \quad \mathbf{x}_{t+1}=\operatorname{prox}_{\lambda_{t} f}\left(\mathbf{x}_{t}\right)
+$$
+
+
+
+
+\subsection*{Theorem 12.7 Convergence of PPA}
+If $f$ is convex, then for any $T \geq 1$,
+$$
+f\left(\mathbf{x}_{T+1}\right)-f^{*} \leq \frac{\left\|\mathbf{x}_{1}-\mathbf{x}^{*}\right\|_{2}^{2}}{2 \sum_{t=1}^{T} \lambda_{t}} .
+$$
+
+Setting $\lambda_{t}=\lambda$, this implies a $\O(1 / t)$ convergence rate.
+
+
+
+
+
+\subsection*{Smoothing Techniques for Nonconvex Functions}
+\subsubsection*{Lasry-Lions Regularization}
+Handout12 Page 43
+\subsubsection*{Randomized Smoothing}
+Handout12 Page 44

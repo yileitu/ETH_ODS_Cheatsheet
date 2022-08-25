@@ -1,0 +1,245 @@
+\section*{7. Variance-reduced Stochastic Methods}
+\subsection*{The Non-Convergence of Adam}
+\red{Counterexample}: consider a one-dim problem:
+$$
+\begin{aligned}
+    &X=[-1,1], f(x, \xi)=\left\{\begin{array}{lc}
+C x, & \text { if } \xi=1 \\
+-x, & \text { if } \xi=0
+\end{array} \\
+& \Prob(\xi=1)=p=\frac{1+\delta}{C+1} \right.
+\end{aligned}
+$$
+\begin{itemize}[leftmargin=*]
+    \item Here $F(x)=\mathbb{E}[f(x, \xi)]=\delta x$ and $x^{*}=-1$.
+    \item Adam step is $x_{t+1}=x_{t}-\gamma_{0} \Delta_{t}$ with $\Delta_{t}=\frac{\alpha m_{t}+(1-\alpha) g_{t}}{\sqrt{\beta v_{t}+(1-\beta) g_{t}^{2}}}$
+    \item For large enough $C>0$, one can show $\mathbb{E}\left[\Delta_{t}\right] \leq 0$.
+    \item Adam steps keep drifting away from the optimal solution $x^{*}=-1$.
+\end{itemize}
+
+
+
+
+
+
+\subsection*{SGD vs. GD for Finite Sum Problem}
+Complexity for smooth and strongly-convex problems: $\kappa:=L / \mu$.
+
+\begin{tabular}{c|c|c|c}
+\hline \hline & iter complexity & per-iter cost & total cost \\
+\hline GD & \bigO(\kappa \cdot \ln \frac{1}{\epsilon}) & \bigO(n) & \bigO(n \kappa \ln \frac{1}{\epsilon}) \\
+\hline SGD & \bigO(\frac{\kappa}{\epsilon}) & \bigO(1) & \bigO(\frac{\kappa}{\epsilon}) \\
+\hline \hline
+\end{tabular}
+\begin{itemize}[leftmargin=*]
+    \item GD converges \melon{faster} but with \melon{expensive} iter cost.
+    \item SGD converges \melon{slowly} but with \melon{cheap} iter cost.
+    \item SGD is more appealing for large $n$ and moderate accuracy $\epsilon$.
+\end{itemize}
+
+
+
+
+
+\subsection*{SGD vs. GD vs. VR Methods}
+\begin{tabular}{c|c|c} 
+Algo & $\#$ of Iterations & Per-iteration Cost \\
+\hline \hline GD & $O\left(\kappa \log \frac{1}{\epsilon}\right)$ & $O(n)$ \\
+SGD & $O\left(\frac{\kappa}{\epsilon}\right)$ & $O(1)$ \\
+VR & $O\left((n+\kappa) \log \frac{1}{\epsilon}\right)$ & $O(1)$ \\
+\hline \hline
+\end{tabular}
+
+
+
+
+
+
+
+\subsection*{Classical Variance Reduction Techniques}
+$$
+\min _{\mathbf{x} \in \mathbb{R}^{d}} F(\mathbf{x}):=\frac{1}{n} \sum_{i=1}^{n} f_{i}(\mathbf{x})
+$$
+
+\green{Mini-batching}: Use the average of gradients from a random subset
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\gamma_{t} \frac{1}{\left|B_{t}\right|} \sum_{i \in B_{t}} \nabla f_{i}\left(\mathbf{x}_{t}\right)
+$$
+
+\melon{Note}: VR comes at a computational cost.
+
+\green{Momentum}: add momentum to the gradient step
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\gamma_{t} \hat{\mathbf{m}}_{t}, \text { where } \hat{\mathbf{m}}_{t}=c \cdot \sum_{\tau=1}^{t} \alpha^{t-\tau} \nabla f_{i_{\tau}}\left(\mathbf{x}_{\tau}\right)
+$$
+
+\melon{Note}: Here $\mathbf{m}_{t}$ is the weighted average of the past stochastic gradients.
+
+
+
+
+
+
+
+\subsection*{Modern Variance Reduction Technique}
+Suppose $X$ is positively correlated with $Y$ and we can compute $\mathbb{E}[Y]$.
+
+\green{Point Estimator}:
+$$
+\begin{aligned}
+&\hat{\Theta}_{\alpha}=\alpha(X-Y)+\mathbb{E}[Y], \quad(0 \leq \alpha \leq 1) \\
+&\mathbb{E}\left[\hat{\Theta}_{\alpha}\right]=\alpha \mathbb{E}[X]+(1-\alpha) \mathbb{E}[Y] \\
+&\mathbb{V}\left[\hat{\Theta}_{\alpha}\right]=\alpha^{2}(\mathbb{V}[X]+\mathbb{V}[Y]-2 \operatorname{Cov}[X, Y])
+\end{aligned}
+$$
+
+If cov is sufficiently large, then $\mathbb{V}\left[\hat{\Theta}_{\alpha}\right] \leq \mathbb{V}[X]$.
+
+
+
+
+
+
+
+\subsection*{Variance Reduction Techniques for Finite Sum Problems}
+Goal: estimate $\theta=\nabla F\left(\mathbf{x}_{t}\right), X=\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right)$
+\begin{itemize}[leftmargin=*]
+    \item \green{SGD}: $\mathbf{g}_{t}=\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right)$
+$[\alpha=1, Y=0]$
+    \item \green{SAG}: $\mathbf{g}_{t}=\frac{1}{n}\left(\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right)-\mathbf{v}_{i_{t}}\right)+\frac{1}{n} \sum_{i=1}^{n} \mathbf{v}_{i}$
+$\left[\alpha=\frac{1}{n}, Y=\mathbf{v}_{i_{t}}\right]$
+    \item \green{SAGA}: $\mathbf{g}_{t}=\left(\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right)-\mathbf{v}_{i_{t}}\right)+\frac{1}{n} \sum_{i=1}^{n} \mathbf{v}_{i}$
+$\left[\alpha=1, Y=\mathbf{v}_{i_{t}}\right]$
+
+Here $\left\{\mathbf{v}_{i}, i=1, \ldots, n\right\}$ are the past stored gradients for each component.
+    \item \green{SVRG}: $\mathbf{g}_{t}=\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right)-\nabla f_{i_{t}}(\tilde{\mathbf{x}})+\nabla F(\tilde{\mathbf{x}})$
+$\left[\alpha=1, Y=\nabla f_{i_{t}}(\tilde{\mathbf{x}})\right]$
+\end{itemize}
+
+
+
+
+
+
+
+\subsection*{Stochastic Average Gradient (SAG)}
+\melon{Idea}: keep track of the average of $\mathbf{v}_{i}$ as an estimate of the full gradient
+$$
+\mathbf{g}_{t}=\frac{1}{n} \sum_{i=1}^{n} \mathbf{v}_{i}^{t} \quad \approx \quad \frac{1}{n} \sum_{i=1}^{n} \nabla f_{i}\left(\mathbf{x}_{t}\right)=\nabla F\left(\mathbf{x}_{t}\right)
+$$
+The past gradients are updated as:
+
+$$
+\mathbf{v}_{i}^{t}= \begin{cases}\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right), & \text { if } i=i_{t} \\ \mathbf{v}_{i}^{t-1}, & \text { if } i \neq i_{t}\end{cases}
+$$
+
+Equivalently, we have
+$$
+\mathbf{g}_{t}=\mathbf{g}_{t-1}-\frac{1}{n} \underbrace{\mathbf{v}_{i_{t}}^{t-1}}_{Y} + \frac{1}{n} \underbrace{\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right)}_{X}
+$$
+
+$\mathbf{x}_{t+1}=\mathbf{x}_{t}-\frac{\gamma}{n} \sum_{i=1}^{n} \mathbf{v}_{i}^{t}$,
+
+where $\mathbf{v}_{i}^{t}= \begin{cases}\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right), & \text { if } i=i_{t} \\ \mathbf{v}_{i}^{t-1}, & \text { otherwise }\end{cases}$
+
+Biased gradient; Cheap iteration cost; $\bigO(nd)$ memory cost; Hard to analyze.
+
+\begin{itemize}[leftmargin=*]
+    \item \green{Linear convergence}: The first stochastic methods to enjoy linear rate using a constant stepsize for strongly-convex and smooth objectives.
+    \item \green{Memory cost}: $O(n)$ times higher than SGD/SVRG 
+    \item \green{Per-iteration cost}: one gradient evaluation 
+    \item \green{Total complexity}: $O\left(\left(n+\kappa_{\max }\right) \log \left(\frac{1}{\epsilon}\right)\right)$
+\end{itemize}
+
+
+
+
+
+\subsection*{SAGA}
+$$
+\mathbf{x}_{t+1}=\mathbf{x}_{t}-\gamma\left[\left(\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right)-\mathbf{v}_{i_{t}}^{t-1}\right)+\frac{1}{n} \sum_{i=1}^{n} \mathbf{v}_{i}^{t-1}\right]
+$$
+\begin{itemize}[leftmargin=*]
+    \item \red{Unbiased} update, while \red{SAG is biased}
+    \item Same $\bigO(n d)$ memory cost as SAG
+    \item Similar linear convergence rate as SAG
+\end{itemize}
+
+
+
+
+
+
+
+
+\subsection*{Stochastic Variance Reduced Gradient (SVRG)}
+% \begin{wrapfigure}{l}{\linewidth}
+% \includegraphics[width=\linewidth]{figures/Stochastic Variance Reduced Gradient.png}
+% \end{wrapfigure}
+
+% \begin{figure}[p]
+% \includegraphics[width=0.25\linewidth]{figures/Stochastic Variance Reduced Gradient.png}
+% \end{figure}
+
+
+\melon{Intuition}: the closer $\tilde{\mathbf{x}}$ is to $\mathbf{x}_{t}$, the smaller the variance of the gradient estimator
+$$
+\begin{aligned}
+\mathbb{E}\left[\left\|\mathbf{g}_{t}-\nabla F\left(\mathbf{x}_{t}\right)\right\|^{2}\right] &\leq \mathbb{E}\left[\left\|\nabla f_{i_{t}}\left(\mathbf{x}_{t}\right)-\nabla f_{i_{t}}(\tilde{\mathbf{x}})\right\|^{2}\right]\\
+&\leq L_{\max }^{2}\left\|\mathbf{x}_{t}-\tilde{\mathbf{x}}\right\|^{2}
+\end{aligned}
+$$
+
+\green{Two-loop structure}:
+\begin{itemize}[leftmargin=*]
+    \item Outer loop: update reference point and compute its full gradient at $O(n)$ cost
+    \item Inner loop: update iterates with variance-reduced gradient for $m$ steps
+    \item Total of $O(n+2 m)$ component gradient evaluations at each epoch
+\end{itemize}
+
+\green{Compare to SAG/SAGA}
+
+Pro: Cheap memory cost, no need to store past gradients or past iterates
+
+Con: More parameter tuning, two gradient computation per iteration
+
+
+
+
+
+
+
+
+
+\subsection*{Thm 7.1 Convergence of SVRG}
+Assume each $f_{i}(\mathbf{x})$ is convex and $L_{i}$-smooth, $F(\mathbf{x})$ is $\mu$-strongly convex. Assume $m$ is sufficiently large and $\eta<\frac{1}{2 L_{\max }}$ such that $\rho=\frac{1}{\mu \eta\left(1-2 \eta L_{\max }\right) m}+\frac{2 \eta L_{\max }}{1-2 \eta L_{\max }}<1$, then
+$$
+\mathbb{E}\left[F\left(\tilde{\mathbf{x}}^{s}\right)-F\left(\mathbf{x}^{*}\right)\right] \leq \rho^{s}\left[F\left(\tilde{\mathbf{x}}^{0}\right)-F\left(\mathbf{x}^{*}\right)\right]
+$$
+
+\melon{Linear convergence}: choose $m=\bigO\left(\frac{L_{\max }}{\mu}\right), \eta=\bigO\left(\frac{1}{L_{\max }}\right)$ such that $\rho \in\left(0, \frac{1}{2}\right)$.
+
+\melon{Total complexity}:
+$$
+\bigO\left((2 m+n) \log \frac{1}{\epsilon}\right)=\bigO\left(\left(n+\frac{L_{\max }}{\mu}\right) \log \frac{1}{\epsilon}\right)
+$$
+
+
+
+
+
+
+
+\subsection*{Lemma 7.2 Property of Smoothness}
+Let $F(\mathbf{x})=\frac{1}{n} \sum_{i=1}^{n} f_{i}(\x)$, where each $f_{i}: \mathbb{R}^{{d}} \rightarrow \mathbb{R}$ is a convex and ${L}_{{i}}$-smooth function and ${F}$ has a global minimum $\mathbf{x}^{*}$. Let ${L}_{\max }=$ $\max \left\{{L}_{1}, \ldots, {L}_{n}\right\}$. Then, for any $\vect{x} \in \mathbb{R}^{{d}}$
+$$
+\frac{1}{n} \sum_{i=1}^{n}\left\|\nabla f_{i}(\mathbf{x})-\nabla f_{i}\left(\mathbf{x}^{\star}\right)\right\|_{2}^{2} \leq 2 L_{\max }\left[F(\mathbf{x})-F\left(\mathbf{x}^{\star}\right)\right]
+$$
+
+
+
+\subsection*{Lemma 7.3 Bound of Variance}
+$\tilde{\mathbf{x}}, \mathbf{x}_{\mathrm{t}} \in \mathbb{R}^{\mathrm{d}}$. Denote $\mathbf{g}_{\mathrm{t}}=\nabla \mathrm{f}_{\mathrm{i}_{\mathrm{t}}}\left(\mathbf{x}_{\mathrm{t}}\right)-\nabla \mathrm{f}_{\mathrm{i}_{\mathrm{t}}}(\tilde{\mathbf{x}})+\nabla \mathrm{F}(\tilde{\mathbf{x}})$, where $i_{\mathrm{t}}$ is sampled uniformly from $\{1, \ldots, n\}$. Then
+$$
+\mathbb{E}\left[\left\|\mathbf{g}_{t}\right\|_{2}^{2}\right] \leq 4 L_{\max }\left[F\left(\mathbf{x}_{t}\right)-F\left(\mathbf{x}^{*}\right)+F(\tilde{\mathbf{x}})-F\left(\mathbf{x}^{*}\right)\right]
+$$

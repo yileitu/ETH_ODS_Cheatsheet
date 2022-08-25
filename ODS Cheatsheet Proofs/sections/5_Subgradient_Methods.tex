@@ -1,0 +1,135 @@
+\section*{5. Coordinate Descent}
+\subsection*{Lemma 5.2 Subgradients of Differentiable Func}
+Let $g$ be a subgradient at $\mathbf{x}$. Suppose by contradiction that $\mathbf{g} \neq \nabla f(\mathbf{x})$. From the definition of $g$, for every $y \in \operatorname{dom}(f)$ we have
+$$
+f(\vect{y}) \geq f(\vect{x})+g^{\top}(\vect{y}-\vect{x}) .
+$$
+Since $f$ is differentiable at $\vect{x}$, for every $\vect{y} \in \operatorname{dom}(f)$, we have
+$$
+f(\vect{y})=f(\vect{x})+\nabla f(\vect{x})^{\top}(\vect{y}-\vect{x})+r(\vect{y}-\vect{x}),
+$$
+where $r$ is the error function s.t. $r(\vect{v}) \rightarrow 0$ as $\mathbf{v} \rightarrow 0$. Combining this two formulas, we have
+$$
+(\mathbf{g}-\nabla f(\vect{x}))^{\top}(\mathbf{y}-\mathbf{x}) \leq r(\mathbf{y}-\mathbf{x})
+$$
+
+Take $\epsilon>0$ small enough s.t. $\mathbf{y}=\mathbf{x}+\epsilon(\mathbf{g}-\nabla f(\mathbf{x})) \in \operatorname{dom}(f)$. Applying $\mathbf{y}=\mathbf{x}+\epsilon(\mathbf{g}-\nabla f(\mathbf{x}))$ to the formula above, we have
+$$
+\epsilon\|\mathbf{g}-\nabla f(\mathbf{x})\|^{2} \leq r(\epsilon(\mathbf{g}-\nabla f(\mathbf{x}))) .
+$$
+Divide the inequality above by $\epsilon\|\mathbf{g}-\nabla f(\mathbf{x})\|$ and we have
+$$
+\|\mathbf{g}-\nabla f(\vect{x})\| \leq \frac{r(\epsilon(\mathbf{g}-\nabla f(\mathbf{x})))}{\epsilon\|\mathbf{g}-\nabla f(\mathbf{x})\|}
+$$
+
+Note that the right hand side goes to 0 as $\epsilon \rightarrow 0$. Thus, by taking $\epsilon \rightarrow 0$, we have
+$$
+\|\mathbf{g}-\nabla f(\vect{x})\| \leq 0
+$$
+
+This just shows that $\|\vect{g}-\nabla f(\vect{x})\|=0$, which implies that $\vect{g}=\nabla f(\vect{x})$. Contradiction. Thus, we have $\partial f(\vect{x}) \subseteq\{\nabla f(\vect{x})\}$.
+
+
+
+
+
+
+
+
+\subsection*{Lemma 5.6 Convex and Lipschitz continuity = bounded subgradients}
+We assume that $\operatorname{dom}(f)=\mathbb{R}^{\mathrm{d}}$ and hint at the general case. 
+
+$(ii) \Longrightarrow (i)$: Given any $x \in \mathbb{R}^{\mathrm{d}}$ (harder alternative: $x$ in a convex domain $D=\operatorname{dom}(f)$ ), consider $\mathbf{g}$ an element of $\partial f(\mathbf{x})$. Let $\mathbf{z}=\mathbf{x}+\mathbf{g}$ (alternative: let $\eta>0$ such that $\mathbf{z}=\mathbf{x}+\eta \boldsymbol{g}$ is still in $D$).
+
+Since $f$ is B-Lipschitz, we have
+$$
+f(z)-f(x) \leq B \cdot\|z-x\|=B \cdot\|g\|
+$$
+
+(Alternative $\cdots \leq \eta \cdot\|\mathbf{g}\|$)
+
+Using the definition of subgradient, we have:
+$$
+f(\vect{z})-f(\vect{x}) \geq \mathbf{g}^{\top}(\mathbf{\vect{z}}-\mathbf{\vect{x}})=\|\mathbf{g}\|^{2}
+$$
+
+(Alternative: $\cdots \geq \eta \cdot\|\mathbf{g}\|^{2}$)
+
+Combining the inequalities, we have $\|\mathbf{g}\| \leq B$ (the $\eta$ is simplified on both sides in the alternative situation when $x$ is drawn from a domain $D$ and not from all $\mathbb{R}^{\mathrm{d}}$ and we get the same result.)
+
+$(i) \Longrightarrow (ii)$:
+Let $\vect{x}, \vect{y} \in \mathbb{R}^{\mathrm{d}}$ and let $\mathbf{g}$ be any element in $\partial f(\vect{x})$, by definition of subgradient we have: $f(\mathbf{y})-\mathbf{f}(\mathbf{x}) \geq \mathbf{g}^{\top}(\mathbf{y}-\mathbf{x})$, therefore, by inversing the signs in the inequality, then using Cauchy-Schwarz and finally the bound on the norm of the subgradient, we have:
+$$
+\begin{aligned}
+f(\vect{x})-f(\vect{y}) & \leq g^{\top}(\vect{x}-\vect{y}) \\
+& \leq\|\mathbf{g}\| \cdot\|\vect{x}-\vect{y}\| \\
+& \leq B \cdot\|\vect{x}-\vect{y}\| .
+\end{aligned}
+$$
+
+Note that $f(\vect{y})-f(\vect{x}) \leq B \cdot\|\vect{y}-\vect{x}\|$ follows from a similar proof. Using these two inequalities, we can conclude that (ii) holds.
+
+Note: in the case where $f$ is defined on a convex domain $D$, the latter is assumed to be open in the alternative situation described above. If not, the reasoning applies for any $\mathbf{x}$ in the interior of $D$.
+
+
+
+
+
+\subsection*{Lemma 5.7 Subgradient optimality condition}
+By definition of subgradients, $\mathbf{g}=\mathbf{0} \in \partial f(\mathbf{x})$ gives
+$$
+f(\mathbf{y}) \geq f(\mathbf{x})+\mathbf{g}^{\top}(\mathbf{y}-\mathbf{x})=f(\mathbf{x})
+$$
+for all $\mathbf{y} \in \operatorname{dom}(f)$, so $\mathbf{x}$ is a global minimum.
+
+
+
+\subsection*{Lemma 5.8 Basic Descent Lemma}
+
+
+
+
+
+
+
+\subsection*{Asymptotic Convergence under Different Stepsizes}
+
+Take constant stepsize $\gamma_{t} \equiv \gamma$ as an example. By Thm 5.9,
+\begin{align*}
+    \lim_{T \rightarrow \infty} \min _{1 \leq t \leq T} f\left(\mathbf{x}_{t}\right)-f^{*} &\leq \frac{\left\|\mathbf{x}_{1}-\mathbf{x}^{*}\right\|_{2}^{2}+\sum_{t=1}^{T} \gamma_{t}^{2}\left\|\mathbf{g}_{t}\right\|_{2}^{2}}{2 \sum_{t=1}^{T}  \gamma_{t}} \\
+    &\leq \lim_{T \rightarrow \infty} \frac{R^2}{2\gamma T} + \frac{\gamma^2 B^2 T}{2\gamma T}\\
+    &= \lim_{T \rightarrow \infty} \frac{R^2}{2\gamma T} + \frac{\gamma B^2}{2}\\
+    &= \frac{\gamma B^2}{2} 
+\end{align*}
+
+
+
+
+
+
+\subsection*{Corollary 5.10 Convergence Rate for Convex Lipschitz Problem}
+At first, we want to prove $
+\min _{1 \leq {t} \leq {T}} f\left(\mathrm{x}_{{t}}\right)-f^{*} \leq \mathcal{O}\left(\frac{BR \ln ({T})}{\sqrt{{T}}}\right)
+$
+
+From Thm 5.9, we know that
+$$
+\min _{1 \leq \mathrm{t} \leq \mathrm{T}} f\left(x_{t}\right)-f^{*} \leq \frac{\left\|x_{1}-x^{*}\right\|^{2}+\sum_{t=1}^{T} \gamma_{t}^{2}\left\|\mathbf{g}_{t}\right\|^{2}}{2 \sum_{t=1}^{\mathrm{T}} \gamma_{t}}
+$$
+
+Replacing $\left\|\boldsymbol{g}_{{t}}\right\|^{2}$ by the upper bound $\frac{{R}}{B \sqrt{t}}$ and then using the fact that $\sum_{t=1}^{{T}} 1 / \sqrt{t}=$ $\mathcal{O}(\sqrt{{T}})$ and $\sum_{t=1}^{T} 1 / {t}=\mathcal{O}(\ln {T})$, we can derive the first.
+
+Then we want to prove $
+\min _{1 \leq {t} \leq {T}} f\left(x_{t}\right)-f^{*} \leq 
+\mathcal{O}\left(\frac{B R}{\sqrt{T}}\right)
+$
+
+We can simply ignore the contribution of the first $T/2$ steps. Since all the iterates are inside $X$, we know that $\left\|\vect{x}_{T / 2}-\vect{x}^{*}\right\|^{2} \leq R^{2}$. Then, we apply the equation above on the last $T / 2$ iterates and get the result.
+
+
+
+
+
+
+\subsection*{Thm 5.12}
+
